@@ -1,0 +1,19 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:weightSum="10"
+    android:gravity="center">
+
+    <Button android:id="@+id/btnQ" style="@style/btnLightTheme" android:layout_weight="1" android:text="Q" />
+    <Button android:id="@+id/btnW" style="@style/btnLightTheme" android:layout_weight="1" android:text="W" />
+    <Button android:id="@+id/btnE" style="@style/btnLightTheme" android:layout_weight="1" android:text="E" />
+    <Button android:id="@+id/btnR" style="@style/btnLightTheme" android:layout_weight="1" android:text="R" />
+    <Button android:id="@+id/btnT" style="@style/btnLightTheme" android:layout_weight="1" android:text="T" />
+    <Button android:id="@+id/btnY" style="@style/btnLightTheme" android:layout_weight="1" android:text="Y" />
+    <Button android:id="@+id/btnU" style="@style/btnLightTheme" android:layout_weight="1" android:text="U" />
+    <Button android:id="@+id/btnI" style="@style/btnLightTheme" android:layout_weight="1" android:text="I" />
+    <Button android:id="@+id/btnO" style="@style/btnLightTheme" android:layout_weight="1" android:text="O" />
+    <Button android:id="@+id/btnP" style="@style/btnLightTheme" android:layout_weight="1" android:text="P" />
+</LinearLayout>

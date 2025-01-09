@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backgroundWhiteThemeColor">
+
+    <!-- Scrollable Emoji Content -->
+    <ScrollView
+        android:id="@+id/emojiScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/functionalKeysLayout"
+        android:padding="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Smileys Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Smileys &amp; People"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:padding="8dp" />
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="8"
+                android:padding="4dp">
+
+                <!-- Smileys Emojis with IDs -->
+                <TextView
+                    android:id="@+id/emoji_smiley_1"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:gravity="center"
+                    android:text="😀"
+                    android:textSize="24sp" />
+                <TextView
+                    android:id="@+id/emoji_smiley_2"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:gravity="center"
+                    android:text="😁"
+                    android:textSize="24sp" />
+                <TextView
+                    android:id="@+id/emoji_smiley_3"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:gravity="center"
+                    android:text="😂"
+                    android:textSize="24sp" />
+                <!-- Add more emojis as needed -->
+
+            </GridLayout>
+
+            <!-- Animals Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Animals &amp; Nature"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:padding="8dp" />
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="8"
+                android:padding="4dp">
+
+                <!-- Animals Emojis with IDs -->
+                <TextView
+                    android:id="@+id/emoji_animal_1"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:gravity="center"
+                    android:text="🐶"
+                    android:textSize="24sp" />
+                <TextView
+                    android:id="@+id/emoji_animal_2"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:gravity="center"
+                    android:text="🐱"
+                    android:textSize="24sp" />
+                <!-- Add more emojis as needed -->
+
+            </GridLayout>
+
+            <!-- Add More Sections for Food, Activities, etc., with IDs -->
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Functional Keys Layout -->
+    <LinearLayout
+        android:id="@+id/functionalKeysLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:padding="8dp"
+        >
+
+        <Button
+            android:id="@+id/btn_backspace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="⌫"
+            android:padding="8dp" />
+
+        <Button
+            android:id="@+id/btn_space"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Space"
+            android:padding="8dp" />
+
+        <Button
+            android:id="@+id/btn_enter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="↵"
+            android:padding="8dp" />
+
+    </LinearLayout>
+</RelativeLayout>

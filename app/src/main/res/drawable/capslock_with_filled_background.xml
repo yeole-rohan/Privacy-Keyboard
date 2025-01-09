@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Background with corner radius -->
+    <item>
+        <shape>
+            <solid android:color="@color/backgroundWhiteThemeCapBackDotCommaColor" />
+            <corners android:radius="8.35dp" />
+            <stroke android:width="1dp" android:color="@color/backgroundWhiteThemeCapBackDotCommaColor" />
+        </shape>
+    </item>
+
+    <!-- Shift icon (Caps Lock) -->
+    <item android:drawable="@drawable/ic_caps" android:gravity="center" />
+</layer-list>

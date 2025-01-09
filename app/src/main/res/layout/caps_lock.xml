@@ -1,0 +1,18 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:weightSum="1.5"
+    android:gravity="center">
+    <Button
+        android:id="@+id/btnCapsLock"
+        style="@style/btnLightTheme"
+        android:layout_weight="1.5"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/capslock_with_filled_background"
+        android:text=""
+        android:padding="8dp"
+        />
+</LinearLayout>

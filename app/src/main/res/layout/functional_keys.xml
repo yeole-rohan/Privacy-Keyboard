@@ -1,0 +1,55 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:weightSum="10"
+    android:gravity="center">
+<!-- Space and Functional Keys -->
+
+    <Button
+        android:id="@+id/btnSpecialKeys"
+        style="@style/btnLightTheme"
+        android:layout_weight="1.8"
+        android:text="!?" />
+
+    <!-- Comma Button -->
+    <Button
+        android:id="@+id/btnComma"
+        style="@style/btnLightTheme"
+        android:layout_weight="1"
+        android:text="," />
+
+    <!-- Emoji Button -->
+    <Button
+        android:id="@+id/btnEmoji"
+        style="@style/btnLightTheme"
+        android:padding="8dp"
+        android:layout_width="0dp"
+        android:text="E"
+        android:layout_weight="1"
+
+        />
+    <!-- Space Button -->
+    <Button
+        android:id="@+id/btnSpace"
+        style="@style/btnLightTheme"
+        android:layout_weight="3.9"
+        android:text="Space" />
+
+    <!-- Dot Button -->
+    <Button
+        android:id="@+id/btnDot"
+        style="@style/btnLightTheme"
+        android:layout_weight="1"
+        android:text="." />
+
+    <!-- Enter Button -->
+    <Button
+        android:id="@+id/btnEnter"
+        style="@style/btnLightTheme"
+        android:padding="8dp"
+        android:layout_width="0dp"
+        android:background="@drawable/arrow_with_background"
+        android:layout_weight="1.3" />
+</LinearLayout>

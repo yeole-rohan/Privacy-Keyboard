@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:fontFamily="@font/roboto"
+    android:background="@color/backgroundWhiteThemeColor"
+    android:padding="4dp">
+
+    <!-- Numeric Row -->
+    <include
+        android:id="@+id/rowNumeric"
+        layout="@layout/row_numeric" />
+
+    <!-- First Alphabetic Row -->
+    <include
+        android:id="@+id/rowAlphabetic1"
+        layout="@layout/row_alphabetic_1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="8dp" />
+
+    <!-- Second Alphabetic Row -->
+    <include
+        android:id="@+id/rowAlphabetic2"
+        layout="@layout/row_alphabetic_2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Third Alphabetic Row -->
+    <include
+        android:id="@+id/rowAlphabetic3"
+        layout="@layout/row_alphabetic_3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Fourth Functional Keys Row -->
+    <include
+        android:id="@+id/functionalKeys"
+        layout="@layout/functional_keys"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="8dp"/>
+
+
+</LinearLayout>

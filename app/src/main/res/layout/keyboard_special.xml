@@ -1,0 +1,74 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:fontFamily="@font/roboto"
+    android:background="@color/backgroundWhiteThemeColor"
+    android:padding="4dp">
+
+    <!-- Numeric Row -->
+    <include
+        android:id="@+id/rowNumeric"
+        layout="@layout/row_numeric" />
+
+    <!-- First Row of Special Characters -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="10">
+
+        <Button android:id="@+id/btnExclamation" style="@style/btnLightTheme" android:layout_weight="1" android:text="!" />
+        <Button android:id="@+id/btnAt" style="@style/btnLightTheme" android:layout_weight="1" android:text="&#64;" />
+        <Button android:id="@+id/btnHash" style="@style/btnLightTheme" android:layout_weight="1" android:text="#" />
+        <Button android:id="@+id/btnDollar" style="@style/btnLightTheme" android:layout_weight="1" android:text="$" />
+        <Button android:id="@+id/btnPercent" style="@style/btnLightTheme" android:layout_weight="1" android:text="%" />
+        <Button android:id="@+id/btnAmpersand" style="@style/btnLightTheme" android:layout_weight="1" android:text="&amp;" />
+        <Button android:id="@+id/btnAsterisk" style="@style/btnLightTheme" android:layout_weight="1" android:text="*" />
+        <Button android:id="@+id/btnLeftParen" style="@style/btnLightTheme" android:layout_weight="1" android:text="(" />
+        <Button android:id="@+id/btnRightParen" style="@style/btnLightTheme" android:layout_weight="1" android:text=")" />
+        <Button android:id="@+id/btnQuestion" style="@style/btnLightTheme" android:layout_weight="1" android:text="?" />
+    </LinearLayout>
+
+    <!-- Second Row of Special Characters -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="10"
+        android:gravity="center">
+
+        <!-- Caps Lock Btn with weight 1.5 -->
+        <include
+            android:id="@+id/capsLock"
+            layout="@layout/caps_lock"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.5" />
+
+        <Button android:id="@+id/btnUnderscore" style="@style/btnLightTheme" android:layout_weight="1" android:text="_" />
+        <Button android:id="@+id/btnPlus" style="@style/btnLightTheme" android:layout_weight="1" android:text="+" />
+        <Button android:id="@+id/btnTilde" style="@style/btnLightTheme" android:layout_weight="1" android:text="~" />
+        <Button android:id="@+id/btnColon" style="@style/btnLightTheme" android:layout_weight="1" android:text=":" />
+        <Button android:id="@+id/btnSemicolon" style="@style/btnLightTheme" android:layout_weight="1" android:text=";" />
+        <Button android:id="@+id/btnSlash" style="@style/btnLightTheme" android:layout_weight="1" android:text="/" />
+
+        <!-- BackSpace Btn with weight 1.5 -->
+        <include
+            android:id="@+id/backSpace"
+            layout="@layout/back_space"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.5" />
+    </LinearLayout>
+
+    <!-- Functional Keys Row -->
+    <include
+        android:id="@+id/functionalKeys"
+        layout="@layout/functional_keys"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp" />
+
+</LinearLayout>
