@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="0dp"
+    android:layout_margin="0dp">
+
+    <!-- Horizontal Category Tabs -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:padding="0dp"
+        android:layout_margin="0dp">
+
+        <LinearLayout
+            android:id="@+id/categoryTabs"
+            style="?android:attr/buttonBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="0dp"
+            android:layout_margin="0dp">
+            <Button
+                android:id="@+id/btnRecent"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="24sp"
+                android:padding="0dp"
+                android:layout_margin="0dp"
+                android:text="🕗" />
+            <Button
+                android:id="@+id/btnSmileys"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="24sp"
+                android:padding="0dp"
+                android:layout_margin="0dp"
+                android:text="😀" />
+
+            <Button
+                android:id="@+id/btnAnimals"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="22sp"
+                android:padding="0dp"
+                android:layout_margin="0dp"
+                android:text="🐶" />
+
+            <Button
+                android:id="@+id/btnFood"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="22sp"
+                android:padding="0dp"
+                android:layout_margin="0dp"
+                android:text="🍎" />
+
+            <Button
+                android:id="@+id/btnActivity"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="22sp"
+                android:padding="0dp"
+                android:layout_margin="0dp"
+                android:text="⚽" />
+
+            <Button
+                android:id="@+id/btnObjects"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:textSize="22sp"
+                android:padding="0dp"
+                android:layout_margin="0dp"
+                android:layout_height="wrap_content"
+                android:text="📱" />
+
+            <Button
+                android:id="@+id/btnSymbols"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="0dp"
+                android:layout_margin="0dp"
+                android:textSize="22sp"
+                android:text="❤️" />
+
+            <Button
+                android:id="@+id/btnFlags"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="22sp"
+                android:padding="0dp"
+                android:layout_margin="0dp"
+                android:text="🇮🇳" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#FF000000" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/scrollView"
+        android:padding="0dp"
+        android:layout_margin="0dp">
+
+        <LinearLayout
+            android:id="@+id/emojiLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="0dp"
+            android:layout_margin="0dp">
+
+            <LinearLayout
+                android:id="@+id/emojiContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="0dp"
+                android:layout_margin="0dp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Backspace Button -->
+    <Button
+        android:id="@+id/btnBackspace"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="⌫"
+        android:padding="12dp"
+        android:textSize="18sp" />
+
+</LinearLayout>

@@ -20,21 +20,11 @@
         android:layout_weight="1"
         android:text="," />
 
-    <!-- Emoji Button -->
-    <Button
-        android:id="@+id/btnEmoji"
-        style="@style/btnLightTheme"
-        android:padding="8dp"
-        android:layout_width="0dp"
-        android:text="E"
-        android:layout_weight="1"
-
-        />
     <!-- Space Button -->
     <Button
         android:id="@+id/btnSpace"
         style="@style/btnLightTheme"
-        android:layout_weight="3.9"
+        android:layout_weight="4.9"
         android:text="Space" />
 
     <!-- Dot Button -->

@@ -7,6 +7,7 @@
     android:background="@color/backgroundWhiteThemeColor"
     android:padding="4dp">
 
+
     <!-- Numeric Row -->
     <include
         android:id="@+id/rowNumeric"
@@ -17,7 +18,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="10">
+        android:weightSum="10"
+        android:layout_marginTop="12dp">
 
         <Button android:id="@+id/btnExclamation" style="@style/btnLightTheme" android:layout_weight="1" android:text="!" />
         <Button android:id="@+id/btnAt" style="@style/btnLightTheme" android:layout_weight="1" android:text="&#64;" />
@@ -37,16 +39,10 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:weightSum="10"
-        android:gravity="center">
+        android:gravity="center"
+        android:layout_marginTop="12dp">
 
-        <!-- Caps Lock Btn with weight 1.5 -->
-        <include
-            android:id="@+id/capsLock"
-            layout="@layout/caps_lock"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1.5" />
-
+        <Button android:id="@+id/btnMinus" style="@style/btnLightTheme" android:layout_weight="1.5" android:text="-" />
         <Button android:id="@+id/btnUnderscore" style="@style/btnLightTheme" android:layout_weight="1" android:text="_" />
         <Button android:id="@+id/btnPlus" style="@style/btnLightTheme" android:layout_weight="1" android:text="+" />
         <Button android:id="@+id/btnTilde" style="@style/btnLightTheme" android:layout_weight="1" android:text="~" />
