@@ -3,4 +3,5 @@
         <string name="mykeyboard">MyKeyboard</string>
         <string name="enable_keyboard">enable keyboard</string>
         <string name="choose_keyboard">Choose Keyboard</string>
+    <string name="no_recent_emoji_found">No Recent Emoji Found.</string>
 </resources>

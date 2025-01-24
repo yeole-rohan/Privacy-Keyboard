@@ -1,11 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:fontFamily="@font/roboto"
-    android:background="@color/backgroundWhiteThemeColor"
-    android:padding="4dp">
+    android:gravity="center"
+    android:id="@+id/topRow"
+    android:background="@color/backgroundWhiteThemeColor">
 
     <LinearLayout
 
@@ -39,19 +38,19 @@
                 >
 
                 <!-- Clipboard content (dynamically populated) -->
-                <TextView
-                    android:id="@+id/clipboardText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="24sp"
-                    android:textColor="@android:color/black"
-                    android:layout_margin="4dp"
-                    android:gravity="center"
-                    />
+<!--                <TextView-->
+<!--                    android:id="@+id/clipboardText"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:textSize="24sp"-->
+<!--                    android:textColor="@android:color/black"-->
+<!--                    android:layout_margin="4dp"-->
+<!--                    android:gravity="center"-->
+<!--                    -->
+<!--                    />-->
 
             </LinearLayout>
         </HorizontalScrollView>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -103,57 +102,4 @@
         </LinearLayout>
 
     </LinearLayout>
-    <LinearLayout
-        android:id="@+id/normalContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:id="@+id/keyboardRowsContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-    <!-- Numeric Row -->
-    <include
-        android:id="@+id/rowNumeric"
-        layout="@layout/row_numeric"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="12dp"/>
-
-    <!-- First Alphabetic Row -->
-    <include
-        android:id="@+id/rowAlphabetic1"
-        layout="@layout/row_alphabetic_1"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="8dp" />
-
-    <!-- Second Alphabetic Row -->
-    <include
-        android:id="@+id/rowAlphabetic2"
-        layout="@layout/row_alphabetic_2"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="8dp"/>
-
-    <!-- Third Alphabetic Row -->
-    <include
-        android:id="@+id/rowAlphabetic3"
-        layout="@layout/row_alphabetic_3"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="8dp"/>
-
-    <!-- Fourth Functional Keys Row -->
-    <include
-        android:id="@+id/functionalKeys"
-        layout="@layout/functional_keys"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="8dp"/>
-
-        </LinearLayout>
-</LinearLayout>
 </LinearLayout>
