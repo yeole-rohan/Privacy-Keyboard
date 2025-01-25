@@ -14,7 +14,6 @@ import com.example.privacykeyboard.databinding.KeyboardLayoutBinding
 import com.example.privacykeyboard.databinding.KeyboardSpecialBinding
 // Core Android components
 import android.content.Context
-
 // For clipboard functionality
 import android.content.ClipboardManager
 import android.content.ClipData
@@ -36,50 +35,96 @@ import android.view.inputmethod.InputConnection
 import android.widget.ScrollView
 import com.example.privacykeyboard.databinding.EmojiLayoutBinding
 import com.example.privacykeyboard.databinding.TopLayoutBinding
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.util.concurrent.Executors
+import java.util.zip.ZipInputStream
+
 
 class MyKeyboard : InputMethodService() {
-    private var isCapsLockActive: Boolean = true // Tracks Caps Lock state
-    private lateinit var normalBinding: KeyboardLayoutBinding // Binding for normal keyboard layout
-    private lateinit var emojiBinding: EmojiLayoutBinding // Binding for normal keyboard layout
-    private lateinit var specialBinding: KeyboardSpecialBinding // Binding for special keys layout
-    private var activeView: View? = null // Currently active view
-    private val handler: Handler = Handler(Looper.getMainLooper()) // Handler for backspace repetition
-    private var isBackspacePressed: Boolean = false // Tracks if backspace is pressed
-    private var isSpecialKeysEnabled: Boolean = false // Tracks Special Keys layout state
-    private val TAG: String = "MyKeyboard" // Log tag for debugging
+    // Constant for logging, renamed for clarity and following convention
+    private val TAG: String = "MyKeyboard"
+
+    // Boolean flag for Caps Lock state, use `val` if it's not changing after initialization
+    private var isCapsLockActive: Boolean = true
+
+    // Binding variables initialized using lateinit
+    private lateinit var normalBinding: KeyboardLayoutBinding
+    private lateinit var emojiBinding: EmojiLayoutBinding
+    private lateinit var specialBinding: KeyboardSpecialBinding
+
+    // Active view, nullable to handle no active view scenario
+    private var activeView: View? = null
+
+    // Handler for main thread tasks, initialized with Looper.getMainLooper()
+    private val handler: Handler = Handler(Looper.getMainLooper())
+
+    // Boolean flags for Backspace state and Special Keys layout
+    private var isBackspacePressed: Boolean = false
+    private var isSpecialKeysEnabled: Boolean = false
+
+    // UI container for keyboard rows, initialized via binding
     private lateinit var keyboardRowsContainer: LinearLayout
 
+    // Trie for word suggestions or any similar purpose, initialized on setup
+    private lateinit var trie: Trie
+
     override fun onCreateInputView(): View {
-        // Inflate normal and special layouts
+        // Inflate keyboard layouts using View Binding
         normalBinding = KeyboardLayoutBinding.inflate(layoutInflater)
         specialBinding = KeyboardSpecialBinding.inflate(layoutInflater)
-
-        // Inflate emoji layout and attach it to the normal layout container
         emojiBinding = EmojiLayoutBinding.inflate(layoutInflater)
+
+        // Add emoji layout to the normal layout container
         normalBinding.normalContainer.addView(emojiBinding.root)
-        // Initialize the container for keyboard rows
+
+        // Initialize keyboard rows container and set initial visibility
         keyboardRowsContainer = normalBinding.keyboardRowsContainer
+        keyboardRowsContainer.visibility = View.VISIBLE
+
         // Initially hide the emoji layout
         emojiBinding.root.visibility = View.GONE
 
-        keyboardRowsContainer.visibility = View.VISIBLE
-        // Set initial layout to the normal keyboard
+        // Set initial layout to normal keyboard view
         activeView = normalBinding.root
         setupKeyboardLayout(normalBinding)
 
+        // Configure emoji button click listener
+        normalBinding.btnEmoji.setOnClickListener { toggleEmojiLayout() }
+
+        // Set the height of the emoji keyboard ScrollView dynamically
+        setEmojiKeyboardHeight()
+
+        // Initialize the Trie with dictionary data
+        initializeTrie(this)
+
+        // Return the current active view (the normal keyboard layout)
+        return activeView!!
+    }
+
+    /**
+     * Sets the height of the emoji keyboard ScrollView dynamically based on screen height.
+     */
+    private fun setEmojiKeyboardHeight() {
         val displayMetrics = resources.displayMetrics
         val screenHeight = displayMetrics.heightPixels
 
-// Set the ScrollView height to around 1/4th of the screen height (for the emoji keyboard)
-        val keyboardHeight = (screenHeight * 0.3).toInt() // Adjust this factor as needed
-        val scrollView = emojiBinding.scrollView
-        scrollView.layoutParams.height = keyboardHeight
-        // Set up the emoji button
-        normalBinding.btnEmoji.setOnClickListener {
-            toggleEmojiLayout()
-        }
+        // Set keyboard height to approximately 30% of screen height (adjust factor if needed)
+        val keyboardHeight = (screenHeight * 0.3).toInt()
+        emojiBinding.scrollView.layoutParams.height = keyboardHeight
+    }
 
-        return activeView!!
+    override fun onDestroy() {
+        super.onDestroy()
+        val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        clipboardManager.removePrimaryClipChangedListener { } // Unregister the listener
+    }
+
+    private fun initializeTrie(context: Context) {
+        trie = Trie() // Create a new Trie instance
+        val wordList = loadDictionaryFromAssets(context) // Load the dictionary
+        wordList.forEach { word -> trie.insert(word) } // Insert words into the Trie
+        Log.i(TAG, "Trie initialized with ${wordList.size} words")
     }
     /**
      * Show the keyboard rows.
@@ -363,7 +408,7 @@ class MyKeyboard : InputMethodService() {
             if (recentEmojis.isEmpty()) {
                 val noRecentEmojiText = TextView(this).apply {
                     text = context.getString(R.string.no_recent_emoji_found)
-                    textSize = 18f
+                    textSize = 20f
                     setPadding(16, 16, 16, 16)
                     gravity = Gravity.CENTER
                 }
@@ -498,10 +543,6 @@ class MyKeyboard : InputMethodService() {
         populateRecentEmojis()
     }
 
-
-
-
-
     override fun onUpdateSelection(
         oldSelStart: Int, oldSelEnd: Int,
         newSelStart: Int, newSelEnd: Int,
@@ -528,7 +569,7 @@ class MyKeyboard : InputMethodService() {
                 configureAutocomplete(autocompleteArea, listOf(suggestion1, suggestion2, suggestion3))
 
                 // Update suggestions dynamically
-                updateAutocompleteSuggestions(inputText, autocompleteArea, listOf(suggestion1, suggestion2, suggestion3))
+                updateAutocompleteSuggestions(inputText, autocompleteArea, listOf(suggestion1, suggestion2, suggestion3), this)
 
                 // Set click listeners for suggestions
                 val suggestions = listOf(suggestion1, suggestion2, suggestion3)
@@ -568,95 +609,138 @@ class MyKeyboard : InputMethodService() {
         }
     }
 
-    private fun updateAutocompleteSuggestions(inputText: String, autocompleteArea: LinearLayout, suggestions: List<TextView>) {
-        val dummyWords = listOf("example", "keyboard", "autocomplete") // Replace with real suggestions
-        // Get the last word or segment of the input text
-        val lastInputText = inputText.split(" ").lastOrNull() ?: ""
-        Log.i(TAG, "updateAutocompleteSuggestions: lastInputText $lastInputText")
-        if (lastInputText.isNotEmpty()){
-            val filteredWords = dummyWords.filter { word ->
-                // Check if the last word in inputText contains the current word (case-insensitive)
-                word.contains(lastInputText, ignoreCase = true)
+    private fun updateAutocompleteSuggestions(
+        inputText: String,
+        autocompleteArea: LinearLayout,
+        suggestions: List<TextView>,
+        context: Context
+    ) {
+        // Get the last word typed by the user
+        val lastInputText = inputText.split(" ").lastOrNull()?.lowercase() ?: ""
+        Log.i(TAG, "updateAutocompleteSuggestions: Last input text: $lastInputText")
+        saveUserInput(this@MyKeyboard, lastInputText)
+        if (lastInputText.isNotEmpty()) {
+            // Step 1: Check if the word exists in the user dictionary
+            val userDict = getUserDictionary(context) // Retrieve user dictionary
+            val userDictSuggestions = userDict.filter { it.startsWith(lastInputText, ignoreCase = true) }
+            Log.i(TAG, "updateAutocompleteSuggestions: userDictSuggestions  $userDictSuggestions",)
+            // Step 2: Fill up to 2 suggestions from the user dictionary
+            val suggestionsToShow = mutableListOf<String>()
+
+            // Add up to 2 suggestions from the user dictionary
+            suggestionsToShow.addAll(userDictSuggestions.take(2))
+
+            // Step 3: If there are fewer than 3 suggestions, fill the remaining slots from the Trie
+            if (suggestionsToShow.size < 3) {
+                val remainingSuggestions = trie.searchByPrefix(lastInputText)
+                // Add suggestions from the Trie that are not already in the user dictionary
+                remainingSuggestions.forEach { suggestion ->
+                    // Ensure no duplicates: only add if it's not already in userDictSuggestions
+                    if (!suggestionsToShow.contains(suggestion)) {
+                        suggestionsToShow.add(suggestion)
+                    }
+                }
             }
-            Log.i(TAG, "from updateAutocompleteSuggestions: $inputText and $filteredWords, $dummyWords")
-            // Update suggestions dynamically
+
+            // Step 4: Update the suggestion views
             for (i in suggestions.indices) {
-                if (i < filteredWords.size) {
-                    suggestions[i].text = filteredWords[i]
+                if (i < suggestionsToShow.size) {
+                    suggestions[i].text = suggestionsToShow[i]
                     suggestions[i].visibility = View.VISIBLE
                 } else {
                     suggestions[i].visibility = View.GONE
                 }
             }
-            autocompleteArea.visibility = if (filteredWords.isEmpty()) View.GONE else View.VISIBLE
+
+            // Step 5: Show or hide the autocomplete area
+            autocompleteArea.visibility = if (suggestionsToShow.isEmpty()) View.GONE else View.VISIBLE
+        } else {
+            autocompleteArea.visibility = View.GONE
         }
     }
+
+    // Retrieve the user dictionary from SharedPreferences
+    private fun getUserDictionary(context: Context): Set<String> {
+        val sharedPref = context.getSharedPreferences("UserDict", Context.MODE_PRIVATE)
+        return sharedPref.getStringSet("user_dict", mutableSetOf()) ?: mutableSetOf()
+    }
+
+    // Save new user input to the dictionary, avoiding duplicates
+    private fun saveUserInput(context: Context, input: String) {
+        val sharedPref = context.getSharedPreferences("UserDict", Context.MODE_PRIVATE)
+        val editor = sharedPref.edit()
+
+        // Retrieve the existing dictionary or create a new one if it doesn't exist
+        val existingDict = sharedPref.getStringSet("user_dict", mutableSetOf()) ?: mutableSetOf()
+        Log.i(TAG, "saveUserInput: existingDict")
+        // Check if the word is already in the dictionary, and add it only if it's not present
+        if (!existingDict.contains(input)) {
+            Log.i(TAG, "saveUserInput: $input")
+            existingDict.add(input)  // Add the new word
+            editor.putStringSet("user_dict", existingDict) // Save the updated dictionary
+            editor.apply()  // Asynchronously save
+        }
+    }
+
 
 
     private fun setupClipboardLogic(
         clipboardScroll: HorizontalScrollView,
-        clipboardContainer: LinearLayout,
-
+        clipboardContainer: LinearLayout
     ) {
         val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        Log.i(TAG, "clipboard Manager: $clipboardManager")
-//        btnCancelClipboard.setOnClickListener {
-//            clipboardScroll.visibility = View.GONE
-//            btnCancelClipboard.visibility = View.GONE
-//            clipboardContainer.removeAllViews()
-//        }
+        Log.i(TAG, "Clipboard Manager initialized")
+
+        // Listener to update clipboard content in real-time
+        clipboardManager.addPrimaryClipChangedListener {
+            Log.i(TAG, "Clipboard content changed")
+            updateClipboardContent(clipboardManager, clipboardContainer, clipboardScroll)
+        }
+
+        // Initial setup for clipboard content
+        updateClipboardContent(clipboardManager, clipboardContainer, clipboardScroll)
+    }
+
+    private fun updateClipboardContent(
+        clipboardManager: ClipboardManager,
+        clipboardContainer: LinearLayout,
+        clipboardScroll: HorizontalScrollView
+    ) {
+        // Clear existing clipboard content in the UI
+        clipboardContainer.removeAllViews()
 
         val clipboardData = clipboardManager.primaryClip
-        Log.i(TAG, "clipboard data: $clipboardData, ${clipboardData?.itemCount}, ${clipboardContainer.childCount}")
-        if (clipboardData != null && clipboardContainer.childCount ==1) {
+        Log.i(TAG, "Clipboard data: $clipboardData")
 
+        if (clipboardData != null && clipboardData.itemCount > 0) {
             clipboardScroll.visibility = View.VISIBLE
 
             for (i in 0 until clipboardData.itemCount) {
                 val text = clipboardData.getItemAt(i).text
-                Log.i(TAG, "setupClipboardLogic: text $text")
+                Log.i(TAG, "Clipboard text: $text")
+
                 if (!text.isNullOrEmpty()) {
                     val textView = TextView(this).apply {
                         this.text = text
+                        textSize = 16f
+                        setPadding(16, 16, 16, 16)
                         setOnClickListener {
                             currentInputConnection?.commitText(this.text, 1)
                         }
                     }
+                    Log.i(TAG, "Clipboard: adding to textview")
                     clipboardContainer.addView(textView)
                 }
             }
+        } else {
+            clipboardScroll.visibility = View.GONE // Hide the clipboard UI if there's no data
         }
     }
 
+
     private fun setupAutocompleteLogic(autocompleteArea: LinearLayout, suggestions: List<TextView>) {
-        val dummyWords = listOf("example", "keyboard", "autocomplete") // Replace with real suggestions
-
         fun showSuggestions(inputText: String) {
-            Log.i(TAG, "is empty : ${inputText.isEmpty()}")
-            val filteredWords = dummyWords.filter { it.startsWith(inputText, ignoreCase = true) }
-            Log.i(TAG, "showSuggestions: $filteredWords")
-            for (i in suggestions.indices) {
-                if (i < filteredWords.size) {
-                    suggestions[i].text = filteredWords[i]
-                    suggestions[i].visibility = View.VISIBLE
-                    suggestions[i].setOnClickListener {
-                        currentInputConnection?.commitText(filteredWords[i], 1)
-                    }
-                } else {
-                    suggestions[i].visibility = View.GONE
-                }
-            }
-            autocompleteArea.visibility = if (filteredWords.isEmpty()) View.GONE else View.VISIBLE
-        }
-
-        // Example: Attach this function to input text change events
-        val exampleInputWatcher = object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {}
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                Log.i(TAG, "onTextChanged: called ${s.toString()}")
-                showSuggestions(s.toString())
-            }
+            updateAutocompleteSuggestions(inputText, autocompleteArea, suggestions, this)
         }
     }
 
@@ -968,6 +1052,77 @@ class MyKeyboard : InputMethodService() {
             isCapsLockActive = false
             toggleCapsLockOnButtons(getAlphabeticButtons())
             normalBinding.rowAlphabetic3.capsLock.btnCapsLock.setBackgroundResource(R.drawable.capslock_with_background)
+        }
+    }
+}
+class TrieNode {
+    val children = mutableMapOf<Char, TrieNode>()
+    var isEndOfWord = false
+}
+
+
+fun loadDictionaryFromAssets(context: Context): List<String> {
+    val wordList = mutableListOf<String>()
+
+    try {
+        // Open the ZIP file from the assets folder
+        context.assets.open("dictionary.zip").use { inputStream ->
+            ZipInputStream(inputStream).use { zipStream ->
+                var entry = zipStream.nextEntry
+                Log.i("DictionaryLoader", " to load dictionary: $entry")
+                while (entry != null) { // Iterate through all entries in the ZIP file
+                    if (!entry.isDirectory) {
+                        BufferedReader(InputStreamReader(zipStream)).use { reader ->
+                            reader.lineSequence().forEach { line ->
+                                wordList.add(line.trim())
+                            }
+                        }
+                    }
+                    zipStream.closeEntry() // Close the current entry
+                    entry = zipStream.nextEntry // Move to the next entry
+                }
+            }
+        }
+    } catch (e: Exception) {
+        Log.e("DictionaryLoader", "Failed to load dictionary: ${e.message}", e)
+    }
+
+    return wordList
+}
+
+class Trie {
+    private val root = TrieNode()
+
+    // Insert a word into the Trie
+    fun insert(word: String) {
+        var node = root
+        for (char in word) {
+            node = node.children.getOrPut(char) { TrieNode() }
+        }
+        node.isEndOfWord = true
+    }
+
+    // Search for all words matching a prefix
+    fun searchByPrefix(prefix: String): List<String> {
+        val result = mutableListOf<String>()
+        var node = root
+
+        // Navigate to the end of the prefix
+        for (char in prefix) {
+            node = node.children[char] ?: return result // Prefix not found
+        }
+
+        // Perform DFS to find all words with the given prefix
+        dfs(node, prefix, result)
+        return result
+    }
+
+    private fun dfs(node: TrieNode, prefix: String, result: MutableList<String>) {
+        if (node.isEndOfWord) {
+            result.add(prefix)
+        }
+        for ((char, child) in node.children) {
+            dfs(child, prefix + char, result)
         }
     }
 }
