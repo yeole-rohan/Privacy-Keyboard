@@ -39,7 +39,7 @@
                     android:layout_height="40dp"
                     android:gravity="center"
                     android:text="😀"
-                    android:textSize="24sp" />
+                    android:textSize="26sp" />
                 <TextView
                     android:id="@+id/emoji_smiley_2"
                     android:layout_width="40dp"
