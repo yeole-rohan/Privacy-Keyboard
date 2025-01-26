@@ -9,7 +9,7 @@
     <!-- Caps Lock Btn with weight 1.5 -->
     <include
         android:id="@+id/capsLock"
-        layout="@layout/caps_lock"
+        layout="@layout/caps_lock_btn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1.5" />
@@ -17,64 +17,78 @@
     <!-- Buttons with equal weight -->
     <Button
         android:id="@+id/btnZ"
+        android:clickable="true"
+        android:focusable="true"
         style="@style/btnLightTheme"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Z" />
+        android:text="@string/btn_z" />
 
     <Button
         android:id="@+id/btnX"
         style="@style/btnLightTheme"
         android:layout_width="0dp"
+        android:clickable="true"
+        android:focusable="true"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="X" />
+        android:text="@string/btn_x" />
 
     <Button
         android:id="@+id/btnC"
         style="@style/btnLightTheme"
+        android:clickable="true"
+        android:focusable="true"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="C" />
+        android:text="@string/btn_c" />
 
     <Button
         android:id="@+id/btnV"
         style="@style/btnLightTheme"
         android:layout_width="0dp"
+        android:clickable="true"
+        android:focusable="true"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="V" />
+        android:text="@string/btn_v" />
 
     <Button
         android:id="@+id/btnB"
         style="@style/btnLightTheme"
         android:layout_width="0dp"
+        android:clickable="true"
+        android:focusable="true"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="B" />
+        android:text="@string/btn_b" />
 
     <Button
+        android:clickable="true"
+        android:focusable="true"
         android:id="@+id/btnN"
         style="@style/btnLightTheme"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="N" />
+        android:text="@string/btn_n" />
 
     <Button
         android:id="@+id/btnM"
+        android:clickable="true"
+        android:focusable="true"
         style="@style/btnLightTheme"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="M" />
+        android:text="@string/btn_m" />
 
     <!-- BackSpace Btn with weight 1.5 -->
     <include
         android:id="@+id/backSpace"
-        layout="@layout/back_space"
+        layout="@layout/back_space_btn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1.5" />

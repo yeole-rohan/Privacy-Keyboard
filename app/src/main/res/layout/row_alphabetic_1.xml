@@ -6,14 +6,84 @@
     android:weightSum="10"
     android:gravity="center">
 
-    <Button android:id="@+id/btnQ" style="@style/btnLightTheme" android:layout_weight="1" android:text="Q" />
-    <Button android:id="@+id/btnW" style="@style/btnLightTheme" android:layout_weight="1" android:text="W" />
-    <Button android:id="@+id/btnE" style="@style/btnLightTheme" android:layout_weight="1" android:text="E" />
-    <Button android:id="@+id/btnR" style="@style/btnLightTheme" android:layout_weight="1" android:text="R" />
-    <Button android:id="@+id/btnT" style="@style/btnLightTheme" android:layout_weight="1" android:text="T" />
-    <Button android:id="@+id/btnY" style="@style/btnLightTheme" android:layout_weight="1" android:text="Y" />
-    <Button android:id="@+id/btnU" style="@style/btnLightTheme" android:layout_weight="1" android:text="U" />
-    <Button android:id="@+id/btnI" style="@style/btnLightTheme" android:layout_weight="1" android:text="I" />
-    <Button android:id="@+id/btnO" style="@style/btnLightTheme" android:layout_weight="1" android:text="O" />
-    <Button android:id="@+id/btnP" style="@style/btnLightTheme" android:layout_weight="1" android:text="P" />
+    <Button
+        android:id="@+id/btnQ"
+        android:clickable="true"
+        android:focusable="true"
+        style="@style/btnLightTheme"
+        android:layout_weight="1"
+        android:text="@string/btn_q" />
+
+    <Button
+        android:id="@+id/btnW"
+        android:clickable="true"
+        android:focusable="true"
+        style="@style/btnLightTheme"
+        android:layout_weight="1"
+        android:text="@string/btn_w" />
+
+    <Button
+        android:id="@+id/btnE"
+        android:clickable="true"
+        android:focusable="true"
+        style="@style/btnLightTheme"
+        android:layout_weight="1"
+        android:text="@string/btn_e" />
+
+    <Button
+        android:id="@+id/btnR"
+        android:clickable="true"
+        android:focusable="true"
+        style="@style/btnLightTheme"
+        android:layout_weight="1"
+        android:text="@string/btn_r" />
+
+    <Button
+        android:id="@+id/btnT"
+        android:clickable="true"
+        android:focusable="true"
+        style="@style/btnLightTheme"
+        android:layout_weight="1"
+        android:text="@string/btn_t" />
+
+    <Button
+        android:id="@+id/btnY"
+        android:clickable="true"
+        android:focusable="true"
+        style="@style/btnLightTheme"
+        android:layout_weight="1"
+        android:text="@string/btn_y" />
+
+    <Button
+        android:id="@+id/btnU"
+        android:clickable="true"
+        android:focusable="true"
+        style="@style/btnLightTheme"
+        android:layout_weight="1"
+        android:text="@string/btn_u" />
+
+    <Button
+        android:id="@+id/btnI"
+        android:clickable="true"
+        android:focusable="true"
+        style="@style/btnLightTheme"
+        android:layout_weight="1"
+        android:text="@string/btn_i" />
+
+    <Button
+        android:id="@+id/btnO"
+        android:clickable="true"
+        android:focusable="true"
+        style="@style/btnLightTheme"
+        android:layout_weight="1"
+        android:text="@string/btn_o" />
+
+    <Button
+        android:id="@+id/btnP"
+        android:clickable="true"
+        android:focusable="true"
+        style="@style/btnLightTheme"
+        android:layout_weight="1"
+        android:text="@string/btn_p" />
+
 </LinearLayout>

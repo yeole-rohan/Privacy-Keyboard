@@ -6,12 +6,12 @@
     android:weightSum="1.5"
     android:gravity="center">
     <Button
-        android:id="@+id/btnBackSpace"
+        android:id="@+id/btnCapsLock"
         style="@style/btnLightTheme"
         android:layout_weight="1.5"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:background="@drawable/backspace_with_background"
+        android:background="@drawable/upper_key_icon"
         android:text=""
         android:padding="8dp"
         />
