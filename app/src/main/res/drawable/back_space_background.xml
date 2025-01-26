@@ -10,5 +10,5 @@
     </item>
 
     <!-- Shift icon (Caps Lock) -->
-    <item android:drawable="@drawable/shift" android:gravity="center" />
+    <item android:drawable="@drawable/delete_icon" android:gravity="center" />
 </layer-list>

@@ -5,37 +5,45 @@
     android:orientation="horizontal"
     android:weightSum="10"
     android:gravity="center">
+
 <!-- Space and Functional Keys -->
 
     <Button
         android:id="@+id/btnSpecialKeys"
         style="@style/btnLightTheme"
         android:layout_weight="1.8"
-        android:text="!?" />
+        android:clickable="true"
+        android:focusable="true"
+        android:text="@string/btn_special_keys" />
 
-    <!-- Comma Button -->
     <Button
         android:id="@+id/btnComma"
+        android:clickable="true"
+        android:focusable="true"
         style="@style/btnLightTheme"
         android:layout_weight="1"
-        android:text="," />
+        android:text="@string/btn_comma" />
 
-    <!-- Space Button -->
     <Button
         android:id="@+id/btnSpace"
         style="@style/btnLightTheme"
         android:layout_weight="4.9"
-        android:text="Space" />
+        android:clickable="true"
+        android:focusable="true"
+        android:text="@string/btn_space" />
 
-    <!-- Dot Button -->
     <Button
         android:id="@+id/btnDot"
         style="@style/btnLightTheme"
         android:layout_weight="1"
-        android:text="." />
+        android:text="@string/btn_dot"
+        android:clickable="true"
+        android:focusable="true" />
 
     <!-- Enter Button -->
-    <Button
+    <Button android:clickable="true"
+    android:focusable="true"
+
         android:id="@+id/btnEnter"
         style="@style/btnLightTheme"
         android:padding="8dp"

@@ -12,35 +12,10 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/mykeyboard"
+        android:text="@string/app_name"
         android:textColor="@color/black"
         android:fontFamily="@font/roboto"
         android:textSize="20sp"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Create your first custom keyboard application."
-        android:textColor="@color/black"
-        android:layout_marginTop="10dp"
-        android:fontFamily="@font/roboto"
-        android:textSize="13sp"/>
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:placeholderText="Click Here"
-        app:hintEnabled="false">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="text"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"
-            android:hint="Click Here"
-            android:padding="8dp" />
-
-    </com.google.android.material.textfield.TextInputLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -54,21 +29,12 @@
             android:layout_height="55dp"
             android:textAllCaps="false"
             app:cornerRadius="14dp"
+            android:textColor="@color/white"
             android:backgroundTint="#f69a4d"
             android:fontFamily="@font/roboto"
-            android:layout_marginTop="20dp"
-            android:text="@string/enable_keyboard"/>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnChooseKeyboard"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:textAllCaps="false"
-            app:cornerRadius="14dp"
-            android:backgroundTint="#f69a4d"
-            android:fontFamily="@font/roboto"
-            android:layout_marginTop="20dp"
-            android:text="@string/choose_keyboard"/>
+            android:layout_marginTop="0dp"
+            android:textSize="20sp"
+            android:text="@string/enable_privacy_keyboard"/>
     </LinearLayout>
 
 </LinearLayout>

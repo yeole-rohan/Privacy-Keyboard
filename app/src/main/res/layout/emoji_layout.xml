@@ -30,7 +30,7 @@
                 android:textSize="24sp"
                 android:padding="0dp"
                 android:layout_margin="0dp"
-                android:text="🕗" />
+                android:text="@string/recent_emoji" />
             <Button
                 android:id="@+id/btnSmileys"
                 style="?android:attr/buttonBarButtonStyle"
@@ -39,7 +39,7 @@
                 android:textSize="24sp"
                 android:padding="0dp"
                 android:layout_margin="0dp"
-                android:text="😀" />
+                android:text="@string/smiley_and_people" />
 
             <Button
                 android:id="@+id/btnAnimals"
@@ -49,7 +49,7 @@
                 android:textSize="22sp"
                 android:padding="0dp"
                 android:layout_margin="0dp"
-                android:text="🐶" />
+                android:text="@string/animal" />
 
             <Button
                 android:id="@+id/btnFood"
@@ -59,7 +59,7 @@
                 android:textSize="22sp"
                 android:padding="0dp"
                 android:layout_margin="0dp"
-                android:text="🍎" />
+                android:text="@string/food" />
 
             <Button
                 android:id="@+id/btnActivity"
@@ -69,7 +69,7 @@
                 android:textSize="22sp"
                 android:padding="0dp"
                 android:layout_margin="0dp"
-                android:text="⚽" />
+                android:text="@string/sport" />
 
             <Button
                 android:id="@+id/btnObjects"
@@ -79,7 +79,7 @@
                 android:padding="0dp"
                 android:layout_margin="0dp"
                 android:layout_height="wrap_content"
-                android:text="📱" />
+                android:text="@string/objects" />
 
             <Button
                 android:id="@+id/btnSymbols"
@@ -89,7 +89,7 @@
                 android:padding="0dp"
                 android:layout_margin="0dp"
                 android:textSize="22sp"
-                android:text="❤️" />
+                android:text="@string/symbol" />
 
             <Button
                 android:id="@+id/btnFlags"
@@ -99,7 +99,7 @@
                 android:textSize="22sp"
                 android:padding="0dp"
                 android:layout_margin="0dp"
-                android:text="🇮🇳" />
+                android:text="@string/flag" />
 
         </LinearLayout>
     </HorizontalScrollView>
@@ -140,9 +140,12 @@
         android:id="@+id/btnBackspace"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="?android:attr/buttonBarButtonStyle"
         android:layout_gravity="center"
-        android:text="⌫"
-        android:padding="12dp"
-        android:textSize="18sp" />
+        android:text="@string/back_space"
+        android:background="@drawable/ripple_effect"
+        android:padding="0dp"
+        android:layout_margin="0dp"
+        android:textSize="25sp" />
 
 </LinearLayout>

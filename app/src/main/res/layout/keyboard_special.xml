@@ -21,16 +21,86 @@
         android:weightSum="10"
         android:layout_marginTop="12dp">
 
-        <Button android:id="@+id/btnExclamation" style="@style/btnLightTheme" android:layout_weight="1" android:text="!" />
-        <Button android:id="@+id/btnAt" style="@style/btnLightTheme" android:layout_weight="1" android:text="&#64;" />
-        <Button android:id="@+id/btnHash" style="@style/btnLightTheme" android:layout_weight="1" android:text="#" />
-        <Button android:id="@+id/btnDollar" style="@style/btnLightTheme" android:layout_weight="1" android:text="$" />
-        <Button android:id="@+id/btnPercent" style="@style/btnLightTheme" android:layout_weight="1" android:text="%" />
-        <Button android:id="@+id/btnAmpersand" style="@style/btnLightTheme" android:layout_weight="1" android:text="&amp;" />
-        <Button android:id="@+id/btnAsterisk" style="@style/btnLightTheme" android:layout_weight="1" android:text="*" />
-        <Button android:id="@+id/btnLeftParen" style="@style/btnLightTheme" android:layout_weight="1" android:text="(" />
-        <Button android:id="@+id/btnRightParen" style="@style/btnLightTheme" android:layout_weight="1" android:text=")" />
-        <Button android:id="@+id/btnQuestion" style="@style/btnLightTheme" android:layout_weight="1" android:text="?" />
+        <Button
+            android:clickable="true"
+            android:focusable="true"
+            android:id="@+id/btnExclamation"
+            style="@style/btnLightTheme"
+            android:layout_weight="1"
+            android:text="@string/btn_exclamation" />
+
+        <Button
+            android:clickable="true"
+            android:focusable="true"
+            android:id="@+id/btnAt"
+            style="@style/btnLightTheme"
+            android:layout_weight="1"
+            android:text="@string/btn_at" />
+
+        <Button
+            android:clickable="true"
+            android:focusable="true"
+            android:id="@+id/btnHash"
+            style="@style/btnLightTheme"
+            android:layout_weight="1"
+            android:text="@string/btn_hash" />
+
+        <Button
+            android:clickable="true"
+            android:focusable="true"
+            android:id="@+id/btnDollar"
+            style="@style/btnLightTheme"
+            android:layout_weight="1"
+            android:text="@string/btn_dollar" />
+
+        <Button
+            android:clickable="true"
+            android:focusable="true"
+            android:id="@+id/btnPercent"
+            style="@style/btnLightTheme"
+            android:layout_weight="1"
+            android:text="@string/btn_percent" />
+
+        <Button
+            android:clickable="true"
+            android:focusable="true"
+            android:id="@+id/btnAmpersand"
+            style="@style/btnLightTheme"
+            android:layout_weight="1"
+            android:text="@string/btn_ampersand" />
+
+        <Button
+            android:clickable="true"
+            android:focusable="true"
+            android:id="@+id/btnAsterisk"
+            style="@style/btnLightTheme"
+            android:layout_weight="1"
+            android:text="@string/btn_asterisk" />
+
+        <Button
+            android:clickable="true"
+            android:focusable="true"
+            android:id="@+id/btnLeftParen"
+            style="@style/btnLightTheme"
+            android:layout_weight="1"
+            android:text="@string/btn_left_paren" />
+
+        <Button
+            android:clickable="true"
+            android:focusable="true"
+            android:id="@+id/btnRightParen"
+            style="@style/btnLightTheme"
+            android:layout_weight="1"
+            android:text="@string/btn_right_paren" />
+
+        <Button
+            android:clickable="true"
+            android:focusable="true"
+            android:id="@+id/btnQuestion"
+            style="@style/btnLightTheme"
+            android:layout_weight="1"
+            android:text="@string/btn_question" />
+
     </LinearLayout>
 
     <!-- Second Row of Special Characters -->
@@ -42,18 +112,66 @@
         android:gravity="center"
         android:layout_marginTop="12dp">
 
-        <Button android:id="@+id/btnMinus" style="@style/btnLightTheme" android:layout_weight="1.5" android:text="-" />
-        <Button android:id="@+id/btnUnderscore" style="@style/btnLightTheme" android:layout_weight="1" android:text="_" />
-        <Button android:id="@+id/btnPlus" style="@style/btnLightTheme" android:layout_weight="1" android:text="+" />
-        <Button android:id="@+id/btnTilde" style="@style/btnLightTheme" android:layout_weight="1" android:text="~" />
-        <Button android:id="@+id/btnColon" style="@style/btnLightTheme" android:layout_weight="1" android:text=":" />
-        <Button android:id="@+id/btnSemicolon" style="@style/btnLightTheme" android:layout_weight="1" android:text=";" />
-        <Button android:id="@+id/btnSlash" style="@style/btnLightTheme" android:layout_weight="1" android:text="/" />
+        <Button
+            android:clickable="true"
+            android:focusable="true"
+            android:id="@+id/btnMinus"
+            style="@style/btnLightTheme"
+            android:layout_weight="1.5"
+            android:text="@string/btn_minus" />
+
+        <Button
+            android:clickable="true"
+            android:focusable="true"
+            android:id="@+id/btnUnderscore"
+            style="@style/btnLightTheme"
+            android:layout_weight="1"
+            android:text="@string/btn_underscore" />
+
+        <Button
+            android:clickable="true"
+            android:focusable="true"
+            android:id="@+id/btnPlus"
+            style="@style/btnLightTheme"
+            android:layout_weight="1"
+            android:text="@string/btn_plus" />
+
+        <Button
+            android:clickable="true"
+            android:focusable="true"
+            android:id="@+id/btnTilde"
+            style="@style/btnLightTheme"
+            android:layout_weight="1"
+            android:text="@string/btn_tilde" />
+
+        <Button
+            android:clickable="true"
+            android:focusable="true"
+            android:id="@+id/btnColon"
+            style="@style/btnLightTheme"
+            android:layout_weight="1"
+            android:text="@string/btn_colon" />
+
+        <Button
+            android:clickable="true"
+            android:focusable="true"
+            android:id="@+id/btnSemicolon"
+            style="@style/btnLightTheme"
+            android:layout_weight="1"
+            android:text="@string/btn_semicolon" />
+
+        <Button
+            android:clickable="true"
+            android:focusable="true"
+            android:id="@+id/btnSlash"
+            style="@style/btnLightTheme"
+            android:layout_weight="1"
+            android:text="@string/btn_slash" />
 
         <!-- BackSpace Btn with weight 1.5 -->
         <include
             android:id="@+id/backSpace"
-            layout="@layout/back_space"
+            layout="@layout/back_space_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.5" />

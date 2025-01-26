@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Application element defines the overall properties for the app -->
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -11,30 +12,38 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PrivacyKeyboard"
+        android:hardwareAccelerated="true"
         tools:targetApi="31">
+
+        <!-- Main Activity: Entry point of the app -->
         <activity
             android:name=".MainActivity"
             android:exported="true" android:windowSoftInputMode="adjustResize">
             <intent-filter>
+                <!-- This activity is the main launcher activity -->
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
+
+        <!-- Input Method Service: Custom keyboard service -->
         <service
             android:name=".MyKeyboard"
             android:exported="true"
             android:label="My Keyboard"
             android:permission="android.permission.BIND_INPUT_METHOD">
             <intent-filter>
+                <!-- Define this service as an input method -->
                 <action android:name="android.view.InputMethod" />
             </intent-filter>
 
+            <!-- Meta-data for input method configuration -->
             <meta-data
                 android:name="android.view.im"
                 android:resource="@xml/method" />
         </service>
+
+        <!-- Meta-data for preloaded fonts -->
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

@@ -10,5 +10,5 @@
     </item>
 
     <!-- Arrow icon -->
-    <item android:drawable="@drawable/arrow" android:gravity="center" />
+    <item android:drawable="@drawable/enter_key_arrow" android:gravity="center" />
 </layer-list>

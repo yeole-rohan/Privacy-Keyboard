@@ -19,7 +19,7 @@
             android:id="@+id/btnEmoji"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:text="😀"
+            android:text="@string/smiley"
             android:textSize="20sp" />
 
         <HorizontalScrollView
@@ -31,7 +31,7 @@
             >
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:id="@+id/clipboardContainer"
@@ -41,13 +41,16 @@
                 <!-- Clipboard content (dynamically populated) -->
                 <TextView
                     android:id="@+id/clipboardText"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="24sp"
+                    android:ellipsize="end"
+                    android:maxLines="2"
                     android:textColor="@android:color/black"
                     android:layout_margin="4dp"
                     android:gravity="center"
-                    />
+                    android:maxHeight="48dp"
+                    android:scrollbars="vertical" />
 
             </LinearLayout>
         </HorizontalScrollView>
