@@ -1,7 +1,6 @@
 package com.example.privacykeyboard.controller
 
 import android.view.View
-import android.widget.LinearLayout
 import android.widget.TextView
 import com.example.privacykeyboard.data.UserDictRepository
 import com.example.privacykeyboard.trie.Trie
@@ -9,8 +8,8 @@ import com.example.privacykeyboard.trie.Trie
 class SuggestionController(
     private val trie: Trie,
     private val userDictRepo: UserDictRepository,
-    private val autocompleteArea: LinearLayout,
     private val suggestionViews: List<TextView>,
+    private val dividers: List<View>,           // [divider12, divider23]
     private val onWordSelected: (word: String, rawInput: String) -> Unit
 ) {
     fun update(inputText: String) {
@@ -36,6 +35,7 @@ class SuggestionController(
             }
         }
 
+        // Update suggestion text + visibility
         for (i in suggestionViews.indices) {
             if (i < suggestionsToShow.size) {
                 suggestionViews[i].text = suggestionsToShow[i]
@@ -45,8 +45,24 @@ class SuggestionController(
             }
         }
 
-        autocompleteArea.visibility = if (suggestionsToShow.isEmpty()) View.GONE else View.VISIBLE
+        // Divider between suggestion1 and suggestion2: show only when both visible
+        if (dividers.size >= 1) {
+            dividers[0].visibility =
+                if (suggestionViews.size >= 2 &&
+                    suggestionViews[0].visibility == View.VISIBLE &&
+                    suggestionViews[1].visibility == View.VISIBLE)
+                    View.VISIBLE else View.GONE
+        }
+        // Divider between suggestion2 and suggestion3: show only when both visible
+        if (dividers.size >= 2) {
+            dividers[1].visibility =
+                if (suggestionViews.size >= 3 &&
+                    suggestionViews[1].visibility == View.VISIBLE &&
+                    suggestionViews[2].visibility == View.VISIBLE)
+                    View.VISIBLE else View.GONE
+        }
 
+        // Wire tap handlers
         suggestionViews.forEach { tv ->
             tv.setOnClickListener {
                 val word = tv.text.toString()
@@ -59,7 +75,7 @@ class SuggestionController(
     }
 
     fun hide() {
-        autocompleteArea.visibility = View.GONE
         suggestionViews.forEach { it.visibility = View.GONE }
+        dividers.forEach { it.visibility = View.GONE }
     }
 }

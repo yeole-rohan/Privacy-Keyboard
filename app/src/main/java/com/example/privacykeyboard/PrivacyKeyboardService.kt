@@ -1,6 +1,8 @@
 package com.example.privacykeyboard
 
 import android.inputmethodservice.InputMethodService
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
@@ -23,8 +25,6 @@ import com.example.privacykeyboard.trie.loadDictionaryFromAssets
 import com.example.privacykeyboard.util.HapticHelper
 import com.example.privacykeyboard.util.extractCurrentWord
 import com.example.privacykeyboard.util.isValidWord
-import android.os.Handler
-import android.os.Looper
 
 class PrivacyKeyboardService : InputMethodService() {
 
@@ -92,6 +92,8 @@ class PrivacyKeyboardService : InputMethodService() {
             onEmojiSelected = { emoji ->
                 hapticHelper.perform()
                 currentInputConnection?.commitText("$emoji ", 1)
+                // Show last-picked emoji on the toggle button
+                normalBinding.btnEmoji.text = emoji
             }
         )
         emojiController.setup()
@@ -99,11 +101,14 @@ class PrivacyKeyboardService : InputMethodService() {
         suggestionController = SuggestionController(
             trie = trie,
             userDictRepo = userDictRepo,
-            autocompleteArea = normalBinding.autocompleteArea,
             suggestionViews = listOf(
                 normalBinding.suggestion1,
                 normalBinding.suggestion2,
                 normalBinding.suggestion3
+            ),
+            dividers = listOf(
+                normalBinding.suggDivider12,
+                normalBinding.suggDivider23
             ),
             onWordSelected = { word, rawInput ->
                 currentInputConnection?.deleteSurroundingText(rawInput.length, 0)
@@ -142,6 +147,16 @@ class PrivacyKeyboardService : InputMethodService() {
         if (!restarting) {
             capsController.reset()
         }
+        // Sync clipboard/suggestion visibility with the field's current content
+        val currentText = currentInputConnection
+            ?.getExtractedText(ExtractedTextRequest(), 0)
+            ?.text?.toString() ?: ""
+        if (currentText.isEmpty()) {
+            suggestionController.hide()
+            clipboardController.show()
+        } else {
+            clipboardController.hide()
+        }
     }
 
     override fun onDestroy() {
@@ -162,17 +177,12 @@ class PrivacyKeyboardService : InputMethodService() {
             ?.getExtractedText(ExtractedTextRequest(), 0)
             ?.text?.toString() ?: ""
 
-        val clipboardScroll = normalBinding.clipboardScroll
-        val clipboardContainer = normalBinding.clipboardContainer
-
         if (inputText.isNotEmpty()) {
-            clipboardContainer.visibility = View.GONE
-            clipboardScroll.visibility = View.GONE
+            clipboardController.hide()
             suggestionController.update(inputText)
         } else {
             suggestionController.hide()
-            clipboardContainer.visibility = View.VISIBLE
-            clipboardScroll.visibility = View.VISIBLE
+            clipboardController.show()
         }
     }
 
@@ -198,6 +208,7 @@ class PrivacyKeyboardService : InputMethodService() {
                     isBackspacePressed = true
                     performSingleBackspace()
                     startContinuousBackspace()
+                    resetEmojiButton()
                 }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                     isBackspacePressed = false
@@ -211,6 +222,7 @@ class PrivacyKeyboardService : InputMethodService() {
         normalBinding.functionalKeys.btnEnter.setOnClickListener {
             hapticHelper.perform()
             currentInputConnection?.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER))
+            resetEmojiButton()
         }
 
         // Space — click commits space; swipe left/right moves cursor
@@ -249,6 +261,7 @@ class PrivacyKeyboardService : InputMethodService() {
             if (isValidWord(currentWord)) {
                 userDictRepo.save(currentWord)
             }
+            resetEmojiButton()
         }
 
         // Comma
@@ -256,6 +269,7 @@ class PrivacyKeyboardService : InputMethodService() {
             hapticHelper.perform()
             currentInputConnection?.commitText(",", 1)
             capsController.makeKeysLowercase()
+            resetEmojiButton()
         }
 
         // Dot
@@ -263,6 +277,7 @@ class PrivacyKeyboardService : InputMethodService() {
             hapticHelper.perform()
             currentInputConnection?.commitText(".", 1)
             capsController.makeKeysLowercase()
+            resetEmojiButton()
         }
 
         // Toggle to special layout
@@ -385,6 +400,7 @@ class PrivacyKeyboardService : InputMethodService() {
         if (emojiBinding.root.visibility == View.VISIBLE) {
             emojiBinding.root.visibility = View.GONE
             normalBinding.keyboardRowsContainer.visibility = View.VISIBLE
+            resetEmojiButton()
         } else {
             normalBinding.keyboardRowsContainer.visibility = View.GONE
             emojiBinding.root.visibility = View.VISIBLE
@@ -423,6 +439,7 @@ class PrivacyKeyboardService : InputMethodService() {
                     button.text.toString().lowercase()
                 currentInputConnection?.commitText(inputText, 1)
                 capsController.makeKeysLowercase()
+                resetEmojiButton()
             }
         }
     }
@@ -482,6 +499,15 @@ class PrivacyKeyboardService : InputMethodService() {
         normalBinding.rowNumeric.btn6, normalBinding.rowNumeric.btn7,
         normalBinding.rowNumeric.btn8, normalBinding.rowNumeric.btn9
     )
+
+    // -----------------------------------------------------------------------
+    // Emoji button helpers
+    // -----------------------------------------------------------------------
+
+    /** Resets the emoji toggle button back to the default smiley icon. */
+    private fun resetEmojiButton() {
+        normalBinding.btnEmoji.text = getString(R.string.smiley)
+    }
 
     // -----------------------------------------------------------------------
     // Word helper
