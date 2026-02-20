@@ -30,7 +30,7 @@
 
         <!-- Input Method Service: Custom keyboard service -->
         <service
-            android:name=".MyKeyboard"
+            android:name=".PrivacyKeyboardService"
             android:exported="true"
             android:label="My Keyboard"
             android:permission="android.permission.BIND_INPUT_METHOD">

@@ -60,6 +60,6 @@ class MainActivity : AppCompatActivity() {
         // Get a list of enabled input methods (keyboards) by their IDs
         val enabledInputMethodIds = inputMethodManager.enabledInputMethodList.map { it.id }
         // Check if the custom keyboard's package name is in the list of enabled keyboards
-        return enabledInputMethodIds.contains("com.example.privacykeyboard/.MyKeyBoard")
+        return enabledInputMethodIds.contains("com.example.privacykeyboard/.PrivacyKeyboardService")
     }
 }

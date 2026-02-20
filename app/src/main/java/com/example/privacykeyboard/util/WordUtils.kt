@@ -1,12 +1,6 @@
-package com.example.privacykeyboard
+package com.example.privacykeyboard.util
 
-// ---------------------------------------------------------------------------
-// Pure (Android-free) logic extracted from MyKeyboard for unit-testability.
-// Every function here depends only on Kotlin stdlib — no Android imports.
-// ---------------------------------------------------------------------------
-
-/** 3-state caps cycle matching Gboard behaviour. */
-enum class CapsState { OFF, SHIFT, CAPS_LOCK }
+import com.example.privacykeyboard.model.CapsState
 
 /** Returns the next CapsState after the user taps the Caps button. */
 fun nextCapsState(current: CapsState): CapsState = when (current) {
@@ -24,8 +18,7 @@ fun shouldAutoOffAfterKey(state: CapsState): Boolean = state == CapsState.SHIFT
 
 /**
  * Returns the word currently being typed — the token after the last space
- * in [textBeforeCursor].  This is the "correct" word to save to the user
- * dictionary when Space is pressed.
+ * in [textBeforeCursor].
  */
 fun extractCurrentWord(textBeforeCursor: String): String =
     textBeforeCursor.split(" ").lastOrNull() ?: ""
