@@ -1,32 +1,31 @@
 package com.example.privacykeyboard
 
+import android.content.Context
+import android.content.ClipboardManager
+import android.content.res.ColorStateList
 import android.inputmethodservice.InputMethodService
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.text.TextUtils
 import android.util.Log
+import android.view.GestureDetector
+import android.view.Gravity
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
-import android.widget.Button
-import android.widget.TextView
-import com.example.privacykeyboard.databinding.KeyboardLayoutBinding
-import com.example.privacykeyboard.databinding.KeyboardSpecialBinding
-// Core Android components
-import android.content.Context
-// For clipboard functionality
-import android.content.ClipboardManager
-import android.text.TextUtils
-import android.view.Gravity
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.ExtractedTextRequest
-
-// For UI components like GridLayout and HorizontalScrollView
+import android.widget.Button
 import android.widget.HorizontalScrollView
 import android.widget.LinearLayout
-
-
-// For Input Connection updates
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.example.privacykeyboard.databinding.EmojiLayoutBinding
+import com.example.privacykeyboard.databinding.KeyboardLayoutBinding
+import com.example.privacykeyboard.databinding.KeyboardSpecialBinding
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.zip.ZipInputStream
@@ -36,8 +35,8 @@ class MyKeyboard : InputMethodService() {
     // Constant for logging, renamed for clarity and following convention
     private val TAG: String = "PrivacyKeyboard"
 
-    // Boolean flag for Caps Lock state, use `val` if it's not changing after initialization
-    private var isCapsLockActive: Boolean = true
+    // 3-state caps lock — enum lives in KeyboardLogic.kt (top-level, testable)
+    private var capsState: CapsState = CapsState.SHIFT
 
     // Binding variables initialized using lateinit to reference the layouts
     private lateinit var normalBinding: KeyboardLayoutBinding
@@ -63,6 +62,20 @@ class MyKeyboard : InputMethodService() {
     // Constants for recent emojis handling
     private val RECENT_EMOJIS_KEY = "recent_emojis" // Key to store recent emojis in preferences
     private val MAX_RECENT_EMOJIS = 50 // Max number of recent emojis to store
+
+    // SharedPreferences instances (lazy to defer until service context is ready)
+    private val emojiPrefs by lazy { getSharedPreferences("emoji_prefs", Context.MODE_PRIVATE) }
+    private val userDictPrefs by lazy { getSharedPreferences("UserDict", Context.MODE_PRIVATE) }
+
+    // Clipboard listener reference kept for cleanup in onDestroy
+    private var clipboardListener: ClipboardManager.OnPrimaryClipChangedListener? = null
+
+    // Haptic feedback
+    private val vibrator by lazy { getSystemService(Context.VIBRATOR_SERVICE) as Vibrator }
+
+    // Emoji category tracking for swipe navigation
+    private var currentCategoryIndex = 0
+    private val categoryNames = listOf("Recent", "Smileys", "Animals", "Food", "Activities", "Objects", "Symbols", "Flags")
 
     override fun onCreateInputView(): View {
         // Inflate keyboard layouts using View Binding
@@ -94,7 +107,7 @@ class MyKeyboard : InputMethodService() {
         initializeTrie(this) // Set up the Trie data structure with necessary dictionary
 
         // Return the current active view (the normal keyboard layout)
-        return activeView!! // Return the root view for the normal keyboard layout, ensuring it’s not null
+        return activeView ?: normalBinding.root
     }
 
 
@@ -121,14 +134,26 @@ class MyKeyboard : InputMethodService() {
      * Unregisters the clipboard listener to prevent memory leaks.
      */
     override fun onDestroy() {
-        // Call the superclass method to ensure proper cleanup
         super.onDestroy()
-
-        // Get the ClipboardManager system service to interact with the clipboard
         val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        clipboardListener?.let { clipboardManager.removePrimaryClipChangedListener(it) }
+    }
 
-        // Unregister the listener from the ClipboardManager
-        clipboardManager.removePrimaryClipChangedListener { } // Remove any previously registered listeners from clipboard changes
+    override fun onStartInputView(info: EditorInfo?, restarting: Boolean) {
+        super.onStartInputView(info, restarting)
+        if (!restarting) {
+            capsState = CapsState.SHIFT
+            updateCapsUI()
+        }
+    }
+
+    private fun performHapticFeedback() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrator.vibrate(VibrationEffect.createOneShot(30, VibrationEffect.DEFAULT_AMPLITUDE))
+        } else {
+            @Suppress("DEPRECATION")
+            vibrator.vibrate(30)
+        }
     }
 
 
@@ -450,7 +475,7 @@ class MyKeyboard : InputMethodService() {
                     val rowLayout = LinearLayout(this).apply {
                         orientation = LinearLayout.HORIZONTAL
                         layoutParams = LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.MATCH_PARENT,
                             LinearLayout.LayoutParams.WRAP_CONTENT
                         )
                         setPadding(0, 8, 0, 8) // Add some padding to the row
@@ -461,12 +486,8 @@ class MyKeyboard : InputMethodService() {
                         val emojiView = TextView(this).apply {
                             text = rowEmoji // Set the emoji as text
                             textSize = 39f // Set the size of the emoji
-                            layoutParams = LinearLayout.LayoutParams(
-                                LinearLayout.LayoutParams.WRAP_CONTENT,
-                                LinearLayout.LayoutParams.WRAP_CONTENT
-                            ).apply {
-                                setMargins(4, 8, 4, 8) // Add margins to space out the emojis
-                            }
+                            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                            gravity = Gravity.CENTER
                             setPadding(8, 8, 8, 8) // Add padding inside each emoji view
 
                             // Set a ripple effect for the button click interaction
@@ -476,10 +497,8 @@ class MyKeyboard : InputMethodService() {
 
                             // Set the action for when an emoji is clicked
                             setOnClickListener {
-                                // Commit the emoji to the input connection (inserting the emoji in the text field)
+                                performHapticFeedback()
                                 currentInputConnection?.commitText("$rowEmoji ", 1)
-
-                                // Add the emoji to the recent emojis list
                                 addToRecent(rowEmoji)
                             }
                         }
@@ -518,28 +537,60 @@ class MyKeyboard : InputMethodService() {
 
         // Bind category buttons to their respective actions
         emojiBinding.btnSmileys.setOnClickListener {
-            populateEmojis("Smileys") // Populate the emoji grid with smiley emojis
+            currentCategoryIndex = categoryNames.indexOf("Smileys")
+            populateEmojis("Smileys")
         }
         emojiBinding.btnRecent.setOnClickListener {
-            populateRecentEmojis()  // Populate the emoji grid with recent emojis
+            currentCategoryIndex = categoryNames.indexOf("Recent")
+            populateRecentEmojis()
         }
         emojiBinding.btnAnimals.setOnClickListener {
-            populateEmojis("Animals") // Populate the emoji grid with animal emojis
+            currentCategoryIndex = categoryNames.indexOf("Animals")
+            populateEmojis("Animals")
         }
         emojiBinding.btnFood.setOnClickListener {
-            populateEmojis("Food") // Populate the emoji grid with food emojis
+            currentCategoryIndex = categoryNames.indexOf("Food")
+            populateEmojis("Food")
         }
         emojiBinding.btnActivity.setOnClickListener {
-            populateEmojis("Activities") // Populate the emoji grid with activity-related emojis
+            currentCategoryIndex = categoryNames.indexOf("Activities")
+            populateEmojis("Activities")
         }
         emojiBinding.btnObjects.setOnClickListener {
-            populateEmojis("Objects") // Populate the emoji grid with object-related emojis
+            currentCategoryIndex = categoryNames.indexOf("Objects")
+            populateEmojis("Objects")
         }
         emojiBinding.btnSymbols.setOnClickListener {
-            populateEmojis("Symbols") // Populate the emoji grid with symbol-related emojis
+            currentCategoryIndex = categoryNames.indexOf("Symbols")
+            populateEmojis("Symbols")
         }
         emojiBinding.btnFlags.setOnClickListener {
-            populateEmojis("Flags") // Populate the emoji grid with flag emojis
+            currentCategoryIndex = categoryNames.indexOf("Flags")
+            populateEmojis("Flags")
+        }
+
+        // Emoji category swipe: swipe left = next category, swipe right = previous category
+        val emojiGestureDetector = GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
+            override fun onFling(e1: MotionEvent?, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
+                val deltaX = (e2.x) - (e1?.x ?: e2.x)
+                if (Math.abs(deltaX) > 100 && Math.abs(velocityX) > 100) {
+                    if (deltaX < 0) {
+                        // Swipe left = next category
+                        currentCategoryIndex = (currentCategoryIndex + 1) % categoryNames.size
+                    } else {
+                        // Swipe right = previous category
+                        currentCategoryIndex = (currentCategoryIndex - 1 + categoryNames.size) % categoryNames.size
+                    }
+                    val category = categoryNames[currentCategoryIndex]
+                    if (category == "Recent") populateRecentEmojis() else populateEmojis(category)
+                    return true
+                }
+                return false
+            }
+        })
+        emojiBinding.scrollView.setOnTouchListener { v, event ->
+            emojiGestureDetector.onTouchEvent(event)
+            false
         }
 
         // Populate the emoji grid with the default category (Recent emojis)
@@ -663,7 +714,7 @@ class MyKeyboard : InputMethodService() {
                 val rowLayout = LinearLayout(this).apply {
                     orientation = LinearLayout.HORIZONTAL
                     layoutParams = LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT
                     )
                     setPadding(0, 8, 0, 8) // Add padding between rows
@@ -674,12 +725,8 @@ class MyKeyboard : InputMethodService() {
                     val emojiView = TextView(this).apply {
                         text = rowEmoji
                         textSize = 39f
-                        layoutParams = LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.WRAP_CONTENT,
-                            LinearLayout.LayoutParams.WRAP_CONTENT
-                        ).apply {
-                            setMargins(4, 8, 4, 8) // Set margin for each emoji
-                        }
+                        layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                        gravity = Gravity.CENTER
                         setPadding(8, 8, 8, 8) // Set padding around each emoji
                         // Add ripple effect when clicked
                         background = ContextCompat.getDrawable(context, R.drawable.ripple_effect)
@@ -688,6 +735,7 @@ class MyKeyboard : InputMethodService() {
 
                         // When an emoji is clicked, commit it to the input connection and add to recent emojis
                         setOnClickListener {
+                            performHapticFeedback()
                             currentInputConnection?.commitText("$rowEmoji ", 1)
                             addToRecent(rowEmoji) // Add emoji to recent emojis list
                         }
@@ -739,18 +787,8 @@ class MyKeyboard : InputMethodService() {
      * @return A list of recent emojis, or an empty list if no emojis are stored.
      */
     private fun loadRecentEmojis(): List<String> {
-        // Get the SharedPreferences instance to access stored data
-        val prefs = getSharedPreferences("emoji_prefs", Context.MODE_PRIVATE)
-
-        // Retrieve the stored string of recent emojis, defaulting to an empty string if not found
-        val emojiString = prefs.getString(RECENT_EMOJIS_KEY, "") ?: ""
-
-        // If the emoji string is empty, return an empty list; otherwise, split the string into a list
-        return if (emojiString.isEmpty()) {
-            emptyList()
-        } else {
-            emojiString.split(",") // Split the string by commas to get the list of emojis
-        }
+        val emojiString = emojiPrefs.getString(RECENT_EMOJIS_KEY, "") ?: ""
+        return if (emojiString.isEmpty()) emptyList() else emojiString.split(",")
     }
 
     /**
@@ -760,18 +798,7 @@ class MyKeyboard : InputMethodService() {
      * @param emojis The list of emojis to be saved to SharedPreferences.
      */
     private fun saveRecentEmojis(emojis: List<String>) {
-        // Get the SharedPreferences instance to store the updated data
-        val prefs = getSharedPreferences("emoji_prefs", Context.MODE_PRIVATE)
-
-        // Initialize SharedPreferences editor to make changes
-        val editor = prefs.edit()
-
-        // Convert the list of emojis to a comma-separated string
-        val emojiString = emojis.joinToString(",")
-
-        // Save the string of recent emojis in SharedPreferences
-        editor.putString(RECENT_EMOJIS_KEY, emojiString)
-        editor.apply() // Apply changes asynchronously
+        emojiPrefs.edit().putString(RECENT_EMOJIS_KEY, emojis.joinToString(",")).apply()
     }
 
 
@@ -876,9 +903,7 @@ class MyKeyboard : InputMethodService() {
      * @return A set containing the user-defined words.
      */
     private fun getUserDictionary(context: Context): Set<String> {
-        // Retrieve the user dictionary from SharedPreferences
-        val sharedPref = context.getSharedPreferences("UserDict", Context.MODE_PRIVATE)
-        return sharedPref.getStringSet("user_dict", mutableSetOf()) ?: mutableSetOf()
+        return userDictPrefs.getStringSet("user_dict", mutableSetOf()) ?: mutableSetOf()
     }
 
     /**
@@ -889,21 +914,12 @@ class MyKeyboard : InputMethodService() {
      * @param input The user input to be added to the dictionary.
      */
     private fun saveUserInput(context: Context, input: String) {
-        // Get the SharedPreferences for storing the user dictionary
-        val sharedPref = context.getSharedPreferences("UserDict", Context.MODE_PRIVATE)
-        val editor = sharedPref.edit()
-
-        // Retrieve the existing dictionary from SharedPreferences, or create an empty set if not found
-        val existingDict = sharedPref.getStringSet("user_dict", mutableSetOf()) ?: mutableSetOf()
-
-        // Trim and validate the input before adding to the dictionary
+        val existingDict = userDictPrefs.getStringSet("user_dict", mutableSetOf()) ?: mutableSetOf()
         val trimmedInput = input.trim()
-
         if (isValidWord(trimmedInput) && !existingDict.contains(trimmedInput)) {
             Log.i(TAG, "saveUserInput: $trimmedInput")
-            existingDict.add(trimmedInput)  // Add the new valid word to the dictionary
-            editor.putStringSet("user_dict", existingDict)  // Save the updated dictionary
-            editor.apply()  // Asynchronously save the changes to SharedPreferences
+            existingDict.add(trimmedInput)
+            userDictPrefs.edit().putStringSet("user_dict", existingDict).apply()
         } else {
             Log.i(TAG, "saveUserInput: Invalid or duplicate word - $trimmedInput")
         }
@@ -918,12 +934,7 @@ class MyKeyboard : InputMethodService() {
      * @param word The word to be validated.
      * @return `true` if the word is valid, otherwise `false`.
      */
-    private fun isValidWord(word: String): Boolean {
-        // Regular expression to ensure the word contains only alphabetic characters
-        val wordRegex = "^[a-zA-Z]+$".toRegex()  // Only allows alphabetic letters
-        // Check if the word is not empty, has a length between 2 and 30, and matches the alphabetic pattern
-        return word.isNotEmpty() && word.length in 2..30 && wordRegex.matches(word)
-    }
+    // isValidWord is a top-level function defined in KeyboardLogic.kt
 
     /**
      * Sets up the clipboard functionality by listening for changes in clipboard content.
@@ -939,12 +950,12 @@ class MyKeyboard : InputMethodService() {
         val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         Log.i(TAG, "Clipboard Manager initialized")
 
-        // Listener for clipboard changes; it will update the clipboard view when content changes
-        clipboardManager.addPrimaryClipChangedListener {
+        // Store listener reference so it can be removed in onDestroy to prevent memory leaks
+        clipboardListener = ClipboardManager.OnPrimaryClipChangedListener {
             Log.i(TAG, "Clipboard content changed")
-            // Update the UI to reflect the new clipboard content
             updateClipboardContent(clipboardManager, clipboardContainer, clipboardScroll)
         }
+        clipboardManager.addPrimaryClipChangedListener(clipboardListener!!)
 
         // Perform an initial update of the clipboard content to ensure the UI is up to date
         updateClipboardContent(clipboardManager, clipboardContainer, clipboardScroll)
@@ -1200,10 +1211,9 @@ class MyKeyboard : InputMethodService() {
      *                When a button is clicked, the character is committed to the current input connection.
      */
     private fun setupSpecialCharacterButtons(buttons: Array<Pair<Button, String>>) {
-        // Loop through each button and character pair
         buttons.forEach { (button, character) ->
-            // Set click listener for each button to commit its character to the input connection
             button.setOnClickListener {
+                performHapticFeedback()
                 currentInputConnection?.commitText(character, 1)
             }
         }
@@ -1265,56 +1275,89 @@ class MyKeyboard : InputMethodService() {
         if (isNormalLayout) {
             // Configure action buttons for the normal layout
             normalBinding.rowAlphabetic3.capsLock.btnCapsLock.setOnClickListener {
-                toggleCapsLock() // Toggle between uppercase and lowercase letters
+                performHapticFeedback()
+                toggleCapsLock()
             }
 
             normalBinding.functionalKeys.btnEnter.setOnClickListener {
-                currentInputConnection?.sendKeyEvent(
-                    KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER) // Send an Enter key event
-                )
+                performHapticFeedback()
+                currentInputConnection?.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER))
             }
 
+            // Spacebar: click commits space; swipe left/right moves cursor
+            var swipeStartX = 0f
+            normalBinding.functionalKeys.btnSpace.setOnTouchListener { v, event ->
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        swipeStartX = event.x
+                        false
+                    }
+                    MotionEvent.ACTION_MOVE -> {
+                        val dx = event.x - swipeStartX
+                        val threshold = 30f
+                        val steps = (dx / threshold).toInt()
+                        if (steps != 0) {
+                            val keyCode = if (steps > 0) KeyEvent.KEYCODE_DPAD_RIGHT else KeyEvent.KEYCODE_DPAD_LEFT
+                            repeat(Math.abs(steps)) {
+                                currentInputConnection?.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, keyCode))
+                            }
+                            swipeStartX += steps * threshold
+                        }
+                        true
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        v.performClick()
+                        true
+                    }
+                    else -> false
+                }
+            }
             normalBinding.functionalKeys.btnSpace.setOnClickListener {
-                currentInputConnection?.commitText(" ", 1) // Commit a space character
-                makeKeysLowercase() // Ensure keys are in lowercase after space
-                val currentWord = getCurrentWord() // Get the current word typed
+                performHapticFeedback()
+                currentInputConnection?.commitText(" ", 1)
+                makeKeysLowercase()
+                val currentWord = getCurrentWord()
                 if (isValidWord(currentWord)) {
-                    saveUserInput(this, currentWord) // Save the word if it's valid
+                    saveUserInput(this, currentWord)
                 }
             }
 
             normalBinding.functionalKeys.btnComma.setOnClickListener {
-                currentInputConnection?.commitText(",", 1) // Commit a comma character
-                makeKeysLowercase() // Ensure keys are in lowercase after comma
+                performHapticFeedback()
+                currentInputConnection?.commitText(",", 1)
+                makeKeysLowercase()
             }
 
             normalBinding.functionalKeys.btnDot.setOnClickListener {
-                currentInputConnection?.commitText(".", 1) // Commit a dot character
-                makeKeysLowercase() // Ensure keys are in lowercase after dot
+                performHapticFeedback()
+                currentInputConnection?.commitText(".", 1)
+                makeKeysLowercase()
             }
         } else {
             // Configure action buttons for the special layout
             specialBinding.functionalKeys.btnEnter.setOnClickListener {
-                currentInputConnection?.sendKeyEvent(
-                    KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER) // Send an Enter key event
-                )
+                performHapticFeedback()
+                currentInputConnection?.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER))
             }
 
             specialBinding.functionalKeys.btnSpace.setOnClickListener {
-                currentInputConnection?.commitText(" ", 1) // Commit a space character
+                performHapticFeedback()
+                currentInputConnection?.commitText(" ", 1)
             }
 
             specialBinding.functionalKeys.btnComma.setOnClickListener {
-                currentInputConnection?.commitText(",", 1) // Commit a comma character
+                performHapticFeedback()
+                currentInputConnection?.commitText(",", 1)
             }
 
             specialBinding.functionalKeys.btnDot.setOnClickListener {
-                currentInputConnection?.commitText(".", 1) // Commit a dot character
+                performHapticFeedback()
+                currentInputConnection?.commitText(".", 1)
             }
 
             specialBinding.functionalKeys.btnSpecialKeys.setOnClickListener {
-                isSpecialKeysEnabled = !isSpecialKeysEnabled // Toggle special keys enabled state
-                switchKeyboardLayout(specialBinding.functionalKeys.btnSpecialKeys) // Switch keyboard layout
+                isSpecialKeysEnabled = !isSpecialKeysEnabled
+                switchKeyboardLayout(specialBinding.functionalKeys.btnSpecialKeys)
             }
         }
     }
@@ -1328,8 +1371,8 @@ class MyKeyboard : InputMethodService() {
     private fun getCurrentWord(): String {
         // Get the text before the cursor (up to 100 characters)
         val textBeforeCursor = currentInputConnection?.getTextBeforeCursor(100, 0)?.toString() ?: ""
-        Log.i(TAG, "current word: $textBeforeCursor") // Log the text before the cursor for debugging
-        return textBeforeCursor.split(" ").firstOrNull() ?: "" // Return the first word or an empty string
+        Log.i(TAG, "current word: $textBeforeCursor")
+        return extractCurrentWord(textBeforeCursor)
     }
 
     /**
@@ -1338,14 +1381,19 @@ class MyKeyboard : InputMethodService() {
      * It also ensures that the alphabetic keys are updated to reflect the new Caps Lock state.
      */
     private fun toggleCapsLock() {
-        Log.d(TAG, "toggleCapsLock: Caps Lock state = $isCapsLockActive") // Log the current Caps Lock state for debugging
-        isCapsLockActive = !isCapsLockActive // Toggle the Caps Lock state
+        capsState = nextCapsState(capsState)
+        Log.d(TAG, "toggleCapsLock: new state = $capsState")
+        updateCapsUI()
+    }
 
-        // Choose the appropriate background for the Caps Lock button
-        val iconRes = if (isCapsLockActive) R.drawable.upper_key_icon else R.drawable.lower_key_icon
-        normalBinding.rowAlphabetic3.capsLock.btnCapsLock.setBackgroundResource(iconRes) // Set the button background
-
-        // Update the text case for alphabetic buttons based on the Caps Lock state
+    private fun updateCapsUI() {
+        val btn = normalBinding.rowAlphabetic3.capsLock.btnCapsLock
+        val iconRes = if (capsState == CapsState.OFF) R.drawable.lower_key_icon else R.drawable.upper_key_icon
+        btn.setBackgroundResource(iconRes)
+        // Blue tint when CAPS_LOCK is active to visually distinguish from one-shot SHIFT
+        btn.backgroundTintList = if (capsState == CapsState.CAPS_LOCK)
+            ColorStateList.valueOf(ContextCompat.getColor(this, android.R.color.holo_blue_light))
+        else null
         toggleCapsLockOnButtons(getAlphabeticButtons())
     }
 
@@ -1425,10 +1473,10 @@ class MyKeyboard : InputMethodService() {
         Log.i(TAG, "setupButtonListeners: Setting up buttons")
         buttons.forEach { button ->
             button.setOnClickListener {
-                // Determine if the text should be in uppercase or lowercase based on Caps Lock state
-                val inputText = if (isCapsLockActive) button.text.toString().uppercase() else button.text.toString().lowercase()
-                currentInputConnection?.commitText(inputText, 1) // Commit the text to the input connection
-                makeKeysLowercase() // Reset the case of keys if needed
+                performHapticFeedback()
+                val inputText = if (capsState != CapsState.OFF) button.text.toString().uppercase() else button.text.toString().lowercase()
+                currentInputConnection?.commitText(inputText, 1)
+                makeKeysLowercase()
             }
         }
     }
@@ -1441,8 +1489,7 @@ class MyKeyboard : InputMethodService() {
      */
     private fun toggleCapsLockOnButtons(buttons: Array<Button>) {
         buttons.forEach { button ->
-            // Update the text of the button based on the Caps Lock state
-            button.text = if (isCapsLockActive) button.text.toString().uppercase() else button.text.toString().lowercase()
+            button.text = if (capsState != CapsState.OFF) button.text.toString().uppercase() else button.text.toString().lowercase()
         }
     }
 
@@ -1451,12 +1498,12 @@ class MyKeyboard : InputMethodService() {
      * This function sets `isCapsLockActive` to `false`, updates the button text to lowercase, and resets the Caps Lock button icon.
      */
     private fun makeKeysLowercase() {
-        if (isCapsLockActive) {
-            isCapsLockActive = false
-            // Update the text on all alphabetic buttons to lowercase
+        if (shouldAutoOffAfterKey(capsState)) {
+            capsState = CapsState.OFF
             toggleCapsLockOnButtons(getAlphabeticButtons())
-            // Reset the Caps Lock button icon to its default state
-            normalBinding.rowAlphabetic3.capsLock.btnCapsLock.setBackgroundResource(R.drawable.lower_key_icon)
+            val btn = normalBinding.rowAlphabetic3.capsLock.btnCapsLock
+            btn.setBackgroundResource(R.drawable.lower_key_icon)
+            btn.backgroundTintList = null
         }
     }
 }

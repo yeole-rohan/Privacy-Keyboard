@@ -71,4 +71,40 @@
     <string name="flag">🇮🇳</string>
     <string name="back_space">⌫</string>
     <string name="normal_mode_text">abc</string>
+
+    <!-- Accessibility content descriptions -->
+    <string name="cd_caps_lock">Caps Lock</string>
+    <string name="cd_backspace">Backspace</string>
+    <string name="cd_enter">Enter</string>
+    <string name="cd_space">Space</string>
+    <string name="cd_comma">Comma</string>
+    <string name="cd_dot">Period</string>
+    <string name="cd_emoji">Open emoji picker</string>
+    <string name="cd_special_keys">Switch to special characters</string>
+    <string name="cd_btn_q">Letter Q</string>
+    <string name="cd_btn_w">Letter W</string>
+    <string name="cd_btn_e">Letter E</string>
+    <string name="cd_btn_r">Letter R</string>
+    <string name="cd_btn_t">Letter T</string>
+    <string name="cd_btn_y">Letter Y</string>
+    <string name="cd_btn_u">Letter U</string>
+    <string name="cd_btn_i">Letter I</string>
+    <string name="cd_btn_o">Letter O</string>
+    <string name="cd_btn_p">Letter P</string>
+    <string name="cd_btn_a">Letter A</string>
+    <string name="cd_btn_s">Letter S</string>
+    <string name="cd_btn_d">Letter D</string>
+    <string name="cd_btn_f">Letter F</string>
+    <string name="cd_btn_g">Letter G</string>
+    <string name="cd_btn_h">Letter H</string>
+    <string name="cd_btn_j">Letter J</string>
+    <string name="cd_btn_k">Letter K</string>
+    <string name="cd_btn_l">Letter L</string>
+    <string name="cd_btn_z">Letter Z</string>
+    <string name="cd_btn_x">Letter X</string>
+    <string name="cd_btn_c">Letter C</string>
+    <string name="cd_btn_v">Letter V</string>
+    <string name="cd_btn_b">Letter B</string>
+    <string name="cd_btn_n">Letter N</string>
+    <string name="cd_btn_m">Letter M</string>
 </resources>

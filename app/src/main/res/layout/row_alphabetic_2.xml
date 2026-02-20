@@ -4,7 +4,9 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:weightSum="9"
-    android:gravity="center">
+    android:gravity="center"
+    android:layout_marginStart="18dp"
+    android:layout_marginEnd="18dp">
 
     <Button
         android:id="@+id/btnA"
