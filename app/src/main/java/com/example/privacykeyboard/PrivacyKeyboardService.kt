@@ -388,7 +388,7 @@ class PrivacyKeyboardService : InputMethodService() {
         } else {
             normalBinding.keyboardRowsContainer.visibility = View.GONE
             emojiBinding.root.visibility = View.VISIBLE
-            emojiController.populateRecent()
+            emojiController.render()
         }
     }
 

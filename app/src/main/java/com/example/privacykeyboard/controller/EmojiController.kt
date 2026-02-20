@@ -1,9 +1,8 @@
 package com.example.privacykeyboard.controller
 
 import android.content.Context
-import android.view.GestureDetector
 import android.view.Gravity
-import android.view.MotionEvent
+import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -18,97 +17,92 @@ class EmojiController(
     private val emojiRepo: EmojiRepository,
     private val onEmojiSelected: (String) -> Unit
 ) {
-    private var currentCategoryIndex = 0
-    private val categoryNames = EmojiData.categoryNames
+    // Maps category name → Y offset of its section header (populated after layout pass)
+    private val sectionOffsets = mutableListOf<Pair<String, Int>>()
 
     fun setup() {
-        setupCategoryButtons()
-        setupSwipeGesture()
-        populateRecent()
+        attachScrollListener()
     }
 
-    fun populateRecent() {
+    /** Renders all categories in one continuous pass. Call each time the panel opens. */
+    fun render() {
         emojiBinding.emojiContainer.removeAllViews()
-        val recentEmojis = emojiRepo.loadRecent()
-        if (recentEmojis.isEmpty()) {
-            val tv = TextView(context).apply {
-                text = context.getString(R.string.no_recent_emoji_found)
-                textSize = 25f
-                setPadding(16, 16, 16, 16)
-                gravity = Gravity.CENTER
+        sectionOffsets.clear()
+
+        // Recent first, then every named category (skip "Recent" from categoryNames)
+        buildSection("Recent", getRecentEmojis())
+        EmojiData.categoryNames
+            .filter { it != "Recent" }
+            .forEach { name ->
+                buildSection(name, EmojiData.byCategory[name] ?: emptyList())
             }
-            emojiBinding.emojiContainer.addView(tv)
+
+        // After views are laid out, record each header's Y offset for scroll detection
+        emojiBinding.emojiContainer.post { collectSectionOffsets() }
+
+        // Scroll to top and prime the label
+        emojiBinding.scrollView.scrollTo(0, 0)
+        emojiBinding.tvCurrentCategory.text = "Recent"
+    }
+
+    // -----------------------------------------------------------------------
+    // Private
+    // -----------------------------------------------------------------------
+
+    private fun attachScrollListener() {
+        emojiBinding.scrollView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
+            val current = sectionOffsets.lastOrNull { it.second <= scrollY }?.first
+                ?: sectionOffsets.firstOrNull()?.first
+                ?: return@setOnScrollChangeListener
+            emojiBinding.tvCurrentCategory.text = current
+        }
+    }
+
+    private fun collectSectionOffsets() {
+        sectionOffsets.clear()
+        // Section headers are the direct children of emojiContainer that are TextViews
+        // with a non-null tag set to the category name
+        for (i in 0 until emojiBinding.emojiContainer.childCount) {
+            val child = emojiBinding.emojiContainer.getChildAt(i)
+            val tag = child.tag as? String ?: continue
+            sectionOffsets.add(tag to child.top)
+        }
+    }
+
+    private fun buildSection(name: String, emojis: List<String>) {
+        // Section header
+        val header = TextView(context).apply {
+            text = name
+            textSize = 11f
+            setTypeface(typeface, android.graphics.Typeface.BOLD)
+            letterSpacing = 0.08f
+            alpha = 0.55f
+            setPadding(dpToPx(12), dpToPx(8), dpToPx(12), dpToPx(2))
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            tag = name  // used by collectSectionOffsets()
+        }
+        emojiBinding.emojiContainer.addView(header)
+
+        if (emojis.isEmpty()) {
+            val placeholder = TextView(context).apply {
+                text = context.getString(R.string.no_recent_emoji_found)
+                textSize = 14f
+                setPadding(dpToPx(12), dpToPx(8), dpToPx(12), dpToPx(8))
+                gravity = Gravity.CENTER
+                alpha = 0.5f
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+            }
+            emojiBinding.emojiContainer.addView(placeholder)
             return
         }
-        buildEmojiRows(recentEmojis)
-    }
 
-    fun populateCategory(name: String) {
-        emojiBinding.emojiContainer.removeAllViews()
-        val emojis = EmojiData.byCategory[name] ?: return
         buildEmojiRows(emojis)
-    }
-
-    private fun setupCategoryButtons() {
-        emojiBinding.btnRecent.setOnClickListener {
-            currentCategoryIndex = categoryNames.indexOf("Recent")
-            populateRecent()
-        }
-        emojiBinding.btnSmileys.setOnClickListener {
-            currentCategoryIndex = categoryNames.indexOf("Smileys")
-            populateCategory("Smileys")
-        }
-        emojiBinding.btnAnimals.setOnClickListener {
-            currentCategoryIndex = categoryNames.indexOf("Animals")
-            populateCategory("Animals")
-        }
-        emojiBinding.btnFood.setOnClickListener {
-            currentCategoryIndex = categoryNames.indexOf("Food")
-            populateCategory("Food")
-        }
-        emojiBinding.btnActivity.setOnClickListener {
-            currentCategoryIndex = categoryNames.indexOf("Activities")
-            populateCategory("Activities")
-        }
-        emojiBinding.btnObjects.setOnClickListener {
-            currentCategoryIndex = categoryNames.indexOf("Objects")
-            populateCategory("Objects")
-        }
-        emojiBinding.btnSymbols.setOnClickListener {
-            currentCategoryIndex = categoryNames.indexOf("Symbols")
-            populateCategory("Symbols")
-        }
-        emojiBinding.btnFlags.setOnClickListener {
-            currentCategoryIndex = categoryNames.indexOf("Flags")
-            populateCategory("Flags")
-        }
-    }
-
-    private fun setupSwipeGesture() {
-        val gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
-            override fun onFling(
-                e1: MotionEvent?,
-                e2: MotionEvent,
-                velocityX: Float,
-                velocityY: Float
-            ): Boolean {
-                val deltaX = e2.x - (e1?.x ?: e2.x)
-                if (Math.abs(deltaX) > 100 && Math.abs(velocityX) > 100) {
-                    currentCategoryIndex = if (deltaX < 0)
-                        (currentCategoryIndex + 1) % categoryNames.size
-                    else
-                        (currentCategoryIndex - 1 + categoryNames.size) % categoryNames.size
-                    val category = categoryNames[currentCategoryIndex]
-                    if (category == "Recent") populateRecent() else populateCategory(category)
-                    return true
-                }
-                return false
-            }
-        })
-        emojiBinding.scrollView.setOnTouchListener { _, event ->
-            gestureDetector.onTouchEvent(event)
-            false
-        }
     }
 
     private fun buildEmojiRows(emojis: List<String>) {
@@ -122,7 +116,7 @@ class EmojiController(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT
                     )
-                    setPadding(0, 8, 0, 8)
+                    setPadding(0, dpToPx(4), 0, dpToPx(4))
                 }
                 rowEmojis.forEach { rowEmoji ->
                     val emojiView = TextView(context).apply {
@@ -132,7 +126,7 @@ class EmojiController(
                             0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f
                         )
                         gravity = Gravity.CENTER
-                        setPadding(8, 8, 8, 8)
+                        setPadding(dpToPx(4), dpToPx(4), dpToPx(4), dpToPx(4))
                         background = ContextCompat.getDrawable(context, R.drawable.ripple_effect)
                         isClickable = true
                         isFocusable = true
@@ -148,4 +142,9 @@ class EmojiController(
             }
         }
     }
+
+    private fun getRecentEmojis(): List<String> = emojiRepo.loadRecent()
+
+    private fun dpToPx(dp: Int): Int =
+        (dp * context.resources.displayMetrics.density).toInt()
 }
