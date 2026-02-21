@@ -1,85 +1,124 @@
+# Privacy Keyboard
 
-# PrivacyKeyboard
+A free, open-source Android keyboard that works entirely on your device.
+Your keystrokes, words, and clipboard items never leave your phone — not to us, not to anyone.
 
-**PrivacyKeyboard** is a lightweight, secure, and feature-rich keyboard app designed with user privacy and functionality at its core. Unlike many other keyboard apps, PrivacyKeyboard ensures that your personal data remains on your device, offering peace of mind while providing a seamless typing experience.
-
----
-
-## 🚀 Features
-
-### 🔒 **Privacy First**
-- No data is collected, stored, or shared.
-- Fully offline functionality—no need for an internet connection.
-
-### 🖋️ **Customizable Layouts**
-- Switch between standard alphabetic and special character layouts with ease.
-- Includes numeric rows and quick access to commonly used symbols.
-
-### 🌟 **Dynamic Layout Toggle**
-- A simple toggle button switches between `?!` (special keys) and `abc` (normal keys) layouts for a smooth user experience.
-
-### 🆙 **Smart Caps Lock**
-- Dynamic Caps Lock toggling for uppercase and lowercase typing.
-- Visual indicators for the Caps Lock state.
-
-### ⌨️ **Efficient Backspace**
-- Single press for deleting one character.
-- Long press for continuous deletion with controlled speed.
-
-### 💡 **User-Friendly Buttons**
-- Intuitive button layout for quick access to numbers, letters, and symbols.
-- Clean and modern UI to minimize typing errors.
-
-### 🌐 **No Permissions Required**
-- Does not request access to your contacts, storage, or internet.
-- Designed to keep your data safe from unauthorized access.
-
-### ⚡ **Fast and Lightweight**
-- Optimized for performance, ensuring a lag-free typing experience.
-- Suitable for both low and high-performance devices.
+**Website:** [privacy-keyboard.rohanyeole.com](https://privacy-keyboard.rohanyeole.com)
 
 ---
 
-## ✅ Positive Points
+## Why
 
-- **Privacy-Centric:** Your data stays on your device. No data collection means your keystrokes are never logged.
-- **Enhanced Security:** No internet access ensures that nothing leaves your device.
-- **Customizable Experience:** Switch easily between different keyboard layouts for enhanced functionality.
-- **Smooth Typing:** Fast response times and efficient handling of key presses ensure a seamless experience.
-- **Intuitive Design:** Modern layout designed for minimal errors and maximum productivity.
-- **Low Resource Usage:** Uses minimal storage and memory, making it ideal for all types of devices.
+Your keyboard is the most sensitive app on your phone. It sees your passwords before you tap submit, your messages before you hit send, and your bank account numbers. Most popular keyboards send some or all of this data to remote servers.
+
+Privacy Keyboard has **no internet permission** — Android will not allow any network access without it. There is nothing to opt out of, because nothing is collected.
 
 ---
 
-## 📜 How to Use
+## Features
 
-1. **Install the App:** Download and install the app from the store or directly onto your device.
-2. **Enable PrivacyKeyboard:**
-   - Go to your device's input method settings.
-   - Select PrivacyKeyboard as your preferred input method.
-3. **Switch Layouts:** Use the toggle button (`?!` ↔ `abc`) for seamless switching between normal and special layouts.
-4. **Enjoy Private Typing:** Start typing with complete peace of mind, knowing your data is safe.
-
----
-
-## 💻 Technology Stack
-
-- **Language:** Kotlin
-- **UI Framework:** Android View Binding
-- **Core API:** Android InputMethodService
+- Word suggestions from a built-in dictionary — computed entirely on-device
+- Personal word learning — saves words you use to improve suggestions locally
+- Emoji picker with recently used emoji
+- Clipboard manager — held in memory only, never written to disk
+- 3-state Caps Lock: off / shift (one letter) / caps lock (stays on)
+- Adjustable haptic feedback: Light, Medium, or Strong
+- Seven colour themes: Light, Dark, Ocean, Sunset, Forest, Lavender, Midnight
+- Spacebar swipe to move the cursor left or right
+- Special-character keyboard with symbols, brackets, and punctuation
+- No internet permission — the app cannot connect to the network
 
 ---
 
-## 🤝 Contribution
+## Install & Enable
 
-We welcome contributions to enhance the app! Feel free to submit bug reports, feature requests, or pull requests.
+1. Install the app from the Google Play Store
+2. Open Privacy Keyboard and tap **Enable Keyboard** — Android opens the keyboard settings list
+3. Find Privacy Keyboard in the list and toggle it **ON**, then tap OK
+4. Tap **Select as Active Keyboard** and pick Privacy Keyboard from the system picker
+
+Full visual guide: [privacy-keyboard.rohanyeole.com/#install](https://privacy-keyboard.rohanyeole.com/#install)
 
 ---
 
-## 📧 Contact
+## Build from Source
 
-For support or inquiries, reach out to **[Rohan Yeole]** at **[rayeole@gmail.com]**.
+**Requirements:** Android Studio Hedgehog or newer, JDK 17, Android SDK 34
 
---- 
+```bash
+git clone https://github.com/rohanyeole/privacy-keyboard.git
+cd privacy-keyboard
+./gradlew installDebug        # build + install on connected device
+./gradlew test                # run unit tests (no device needed)
+```
 
-Let me know if you'd like to customize this further or add additional sections!
+After installing from source you need to re-enable the keyboard in Settings
+(Android treats the newly installed package as a new input method).
+
+---
+
+## Project Structure
+
+```
+app/src/main/java/com/example/privacykeyboard/
+├── PrivacyKeyboardService.kt   ← keyboard service (orchestrator)
+├── MainActivity.kt             ← setup / enable flow
+├── SettingsActivity.kt         ← theme + vibration settings
+├── InfoActivity.kt             ← about / privacy / terms / legal pages
+├── controller/
+│   ├── CapsController.kt       ← 3-state caps lock logic
+│   ├── ClipboardController.kt  ← clipboard listener + UI
+│   ├── EmojiController.kt      ← emoji picker + recent emoji
+│   └── SuggestionController.kt ← word suggestion bar
+├── data/
+│   ├── EmojiData.kt            ← emoji category map
+│   ├── EmojiRepository.kt      ← recent emoji (SharedPreferences)
+│   ├── KeyboardTheme.kt        ← theme definitions
+│   └── UserDictRepository.kt   ← personal word list (SharedPreferences)
+├── trie/
+│   ├── Trie.kt                 ← prefix trie for word lookup
+│   ├── TrieNode.kt
+│   └── DictionaryLoader.kt     ← loads dictionary from assets/dictionary.zip
+├── model/
+│   └── CapsState.kt            ← enum: OFF / SHIFT / CAPS_LOCK
+└── util/
+    ├── AppUpdateHelper.kt      ← Google Play in-app update flow
+    ├── HapticHelper.kt         ← vibration wrapper
+    ├── ThemeHelper.kt          ← applies colour theme to all key buttons
+    └── WordUtils.kt            ← word extraction + caps helpers
+```
+
+---
+
+## Privacy
+
+Privacy Keyboard stores three things locally on your device — and nothing else:
+
+| Data | Purpose | Leaves device? |
+|---|---|---|
+| Personal word list | Improve word suggestions | Never |
+| Recent emoji | Show at top of emoji picker | Never |
+| App settings | Theme and vibration strength | Never |
+
+Clipboard items are held in memory only while the keyboard is open and are discarded when it closes.
+
+Full policy: [privacy-keyboard.rohanyeole.com/privacy.html](https://privacy-keyboard.rohanyeole.com/privacy.html)
+
+---
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for setup instructions, code style notes, and how to submit a pull request.
+
+---
+
+## Author
+
+Made by **Rohan Yeole** — [rohanyeole.com](https://rohanyeole.com)
+
+---
+
+## License
+
+Free for personal, non-commercial use. See [Terms of Service](https://privacy-keyboard.rohanyeole.com/terms.html) for details.
+Open-source attributions: [privacy-keyboard.rohanyeole.com/legal.html](https://privacy-keyboard.rohanyeole.com/legal.html)

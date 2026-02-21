@@ -28,7 +28,16 @@ class SuggestionController(
         suggestionsToShow.addAll(userDictSuggestions.take(2))
 
         if (suggestionsToShow.size < 3) {
-            trie.searchByPrefix(lastInputText).forEach { suggestion ->
+            val prefixMatches = trie.searchByPrefix(lastInputText).sortedBy { it.length }
+            val trieResults = if (prefixMatches.isEmpty() && lastInputText.length > 2) {
+                lastInputText.indices
+                    .flatMap { i -> trie.searchByPrefix(lastInputText.removeRange(i, i + 1)) }
+                    .distinct()
+                    .sortedBy { it.length }
+            } else {
+                prefixMatches
+            }
+            trieResults.forEach { suggestion ->
                 if (!suggestionsToShow.contains(suggestion)) {
                     suggestionsToShow.add(suggestion)
                 }

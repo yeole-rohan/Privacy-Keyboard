@@ -11,22 +11,24 @@ class Trie {
         node.isEndOfWord = true
     }
 
-    fun searchByPrefix(prefix: String): List<String> {
+    fun searchByPrefix(prefix: String, limit: Int = 20): List<String> {
         val result = mutableListOf<String>()
         var node = root
         for (char in prefix) {
             node = node.children[char] ?: return result
         }
-        dfs(node, prefix, result)
-        return result
+        dfs(node, prefix, result, limit)
+        return result.sortedBy { it.length }
     }
 
-    private fun dfs(node: TrieNode, prefix: String, result: MutableList<String>) {
+    private fun dfs(node: TrieNode, prefix: String, result: MutableList<String>, limit: Int) {
+        if (result.size >= limit) return
         if (node.isEndOfWord) {
             result.add(prefix)
         }
         for ((char, child) in node.children) {
-            dfs(child, prefix + char, result)
+            if (result.size >= limit) return
+            dfs(child, prefix + char, result, limit)
         }
     }
 }

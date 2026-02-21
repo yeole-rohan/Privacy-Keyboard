@@ -15,6 +15,8 @@ import com.example.privacykeyboard.controller.ClipboardController
 import com.example.privacykeyboard.controller.EmojiController
 import com.example.privacykeyboard.controller.SuggestionController
 import com.example.privacykeyboard.data.EmojiRepository
+import com.example.privacykeyboard.data.KeyboardPreferences
+import com.example.privacykeyboard.data.KeyboardTheme
 import com.example.privacykeyboard.data.UserDictRepository
 import com.example.privacykeyboard.databinding.EmojiLayoutBinding
 import com.example.privacykeyboard.databinding.KeyboardLayoutBinding
@@ -23,6 +25,7 @@ import com.example.privacykeyboard.model.CapsState
 import com.example.privacykeyboard.trie.Trie
 import com.example.privacykeyboard.trie.loadDictionaryFromAssets
 import com.example.privacykeyboard.util.HapticHelper
+import com.example.privacykeyboard.util.ThemeHelper
 import com.example.privacykeyboard.util.extractCurrentWord
 import com.example.privacykeyboard.util.isValidWord
 
@@ -43,6 +46,7 @@ class PrivacyKeyboardService : InputMethodService() {
     private var isSpecialKeysEnabled = false
 
     // Helpers / repositories
+    private lateinit var prefs: KeyboardPreferences
     private lateinit var hapticHelper: HapticHelper
     private lateinit var emojiRepo: EmojiRepository
     private lateinit var userDictRepo: UserDictRepository
@@ -63,13 +67,15 @@ class PrivacyKeyboardService : InputMethodService() {
         specialBinding = KeyboardSpecialBinding.inflate(layoutInflater)
         emojiBinding = EmojiLayoutBinding.inflate(layoutInflater)
 
-        normalBinding.normalContainer.addView(emojiBinding.root)
+        // Insert at 0 so emoji scroll sits above keyboardRowsContainer and functionalKeys
+        normalBinding.normalContainer.addView(emojiBinding.root, 0)
         normalBinding.keyboardRowsContainer.visibility = View.VISIBLE
         emojiBinding.root.visibility = View.GONE
 
         activeView = normalBinding.root
 
-        hapticHelper = HapticHelper(this)
+        prefs = KeyboardPreferences(this)
+        hapticHelper = HapticHelper(this, prefs)
         emojiRepo = EmojiRepository(this)
         userDictRepo = UserDictRepository(this)
 
@@ -92,8 +98,6 @@ class PrivacyKeyboardService : InputMethodService() {
             onEmojiSelected = { emoji ->
                 hapticHelper.perform()
                 currentInputConnection?.commitText("$emoji ", 1)
-                // Show last-picked emoji on the toggle button
-                normalBinding.btnEmoji.text = emoji
             }
         )
         emojiController.setup()
@@ -121,21 +125,16 @@ class PrivacyKeyboardService : InputMethodService() {
         // Emoji toggle button
         normalBinding.btnEmoji.setOnClickListener { toggleEmojiLayout() }
 
-        // Emoji backspace (inside emoji picker)
-        emojiBinding.btnBackspace.setOnTouchListener { _, event ->
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    isBackspacePressed = true
-                    performSingleBackspace()
-                    startContinuousBackspace()
-                }
-                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                    isBackspacePressed = false
-                    handler.removeCallbacksAndMessages(null)
-                }
-            }
-            true
+        // Keyboard settings gear (normal keyboard top bar) → opens SettingsActivity
+        normalBinding.btnKeyboardSettings.setOnClickListener {
+            hapticHelper.perform()
+            val intent = android.content.Intent(this, SettingsActivity::class.java)
+            intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
         }
+
+        // Apply theme to normal keyboard
+        ThemeHelper.applyToKeyboard(normalBinding.root, getCurrentTheme())
 
         setEmojiKeyboardHeight()
 
@@ -157,11 +156,27 @@ class PrivacyKeyboardService : InputMethodService() {
         } else {
             clipboardController.hide()
         }
+        updateSettingsButtonVisibility()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         clipboardController.cleanup()
+    }
+
+    /**
+     * Called every time the keyboard window becomes visible — including when the user
+     * returns from SettingsActivity. Re-applies the current theme so changes take effect
+     * immediately without needing to restart the keyboard.
+     */
+    override fun onWindowShown() {
+        super.onWindowShown()
+        if (!::normalBinding.isInitialized) return
+        val theme = getCurrentTheme()
+        ThemeHelper.applyToKeyboard(normalBinding.root, theme)
+        if (::specialBinding.isInitialized && isSpecialKeysEnabled) {
+            ThemeHelper.applyToKeyboard(specialBinding.root, theme)
+        }
     }
 
     override fun onUpdateSelection(
@@ -184,6 +199,7 @@ class PrivacyKeyboardService : InputMethodService() {
             suggestionController.hide()
             clipboardController.show()
         }
+        updateSettingsButtonVisibility()
     }
 
     // -----------------------------------------------------------------------
@@ -205,10 +221,10 @@ class PrivacyKeyboardService : InputMethodService() {
         normalBinding.rowAlphabetic3.backSpace.btnBackSpace.setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
+                    hapticHelper.perform()
                     isBackspacePressed = true
                     performSingleBackspace()
                     startContinuousBackspace()
-                    resetEmojiButton()
                 }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                     isBackspacePressed = false
@@ -222,7 +238,6 @@ class PrivacyKeyboardService : InputMethodService() {
         normalBinding.functionalKeys.btnEnter.setOnClickListener {
             hapticHelper.perform()
             currentInputConnection?.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER))
-            resetEmojiButton()
         }
 
         // Space — click commits space; swipe left/right moves cursor
@@ -261,7 +276,6 @@ class PrivacyKeyboardService : InputMethodService() {
             if (isValidWord(currentWord)) {
                 userDictRepo.save(currentWord)
             }
-            resetEmojiButton()
         }
 
         // Comma
@@ -269,7 +283,6 @@ class PrivacyKeyboardService : InputMethodService() {
             hapticHelper.perform()
             currentInputConnection?.commitText(",", 1)
             capsController.makeKeysLowercase()
-            resetEmojiButton()
         }
 
         // Dot
@@ -277,7 +290,12 @@ class PrivacyKeyboardService : InputMethodService() {
             hapticHelper.perform()
             currentInputConnection?.commitText(".", 1)
             capsController.makeKeysLowercase()
-            resetEmojiButton()
+        }
+
+        // Apostrophe
+        normalBinding.functionalKeys.btnApostrophe.setOnClickListener {
+            hapticHelper.perform()
+            currentInputConnection?.commitText("'", 1)
         }
 
         // Toggle to special layout
@@ -293,24 +311,26 @@ class PrivacyKeyboardService : InputMethodService() {
     // -----------------------------------------------------------------------
 
     private fun setupSpecialLayout() {
+        // Row 2: @ # $ _ & - + ( ) /
+        // Row 3: * " ' : ; ! ?  (backspace handled separately below)
         val specialButtons = arrayOf(
-            specialBinding.btnMinus to "-",
-            specialBinding.btnExclamation to "!",
             specialBinding.btnAt to "@",
             specialBinding.btnHash to "#",
             specialBinding.btnDollar to "$",
-            specialBinding.btnPercent to "%",
+            specialBinding.btnUnderscore to "_",
             specialBinding.btnAmpersand to "&",
-            specialBinding.btnAsterisk to "*",
+            specialBinding.btnMinus to "-",
+            specialBinding.btnPlus to "+",
             specialBinding.btnLeftParen to "(",
             specialBinding.btnRightParen to ")",
-            specialBinding.btnQuestion to "?",
-            specialBinding.btnUnderscore to "_",
-            specialBinding.btnPlus to "+",
-            specialBinding.btnTilde to "~",
+            specialBinding.btnSlash to "/",
+            specialBinding.btnAsterisk to "*",
+            specialBinding.btnQuote to "\"",
+            specialBinding.btnApostrophe to "'",
             specialBinding.btnColon to ":",
             specialBinding.btnSemicolon to ";",
-            specialBinding.btnSlash to "/"
+            specialBinding.btnExclamation to "!",
+            specialBinding.btnQuestion to "?"
         )
 
         val numericButtons = arrayOf(
@@ -329,10 +349,11 @@ class PrivacyKeyboardService : InputMethodService() {
         setupCharacterButtons(specialButtons)
         setupCharacterButtons(numericButtons)
 
-        // Backspace
+        // Backspace (row 3, above Enter)
         specialBinding.backSpace.btnBackSpace.setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
+                    hapticHelper.perform()
                     isBackspacePressed = true
                     performSingleBackspace()
                     startContinuousBackspace()
@@ -345,35 +366,31 @@ class PrivacyKeyboardService : InputMethodService() {
             true
         }
 
-        // Enter
-        specialBinding.functionalKeys.btnEnter.setOnClickListener {
+        // Bottom row — direct IDs (no functionalKeys include)
+        specialBinding.btnEnter.setOnClickListener {
             hapticHelper.perform()
             currentInputConnection?.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER))
         }
 
-        // Space
-        specialBinding.functionalKeys.btnSpace.setOnClickListener {
+        specialBinding.btnSpace.setOnClickListener {
             hapticHelper.perform()
             currentInputConnection?.commitText(" ", 1)
         }
 
-        // Comma
-        specialBinding.functionalKeys.btnComma.setOnClickListener {
+        specialBinding.btnComma.setOnClickListener {
             hapticHelper.perform()
             currentInputConnection?.commitText(",", 1)
         }
 
-        // Dot
-        specialBinding.functionalKeys.btnDot.setOnClickListener {
+        specialBinding.btnDot.setOnClickListener {
             hapticHelper.perform()
             currentInputConnection?.commitText(".", 1)
         }
 
         // Toggle back to normal layout
-        specialBinding.functionalKeys.btnSpecialKeys.text = getString(R.string.normal_mode_text)
-        specialBinding.functionalKeys.btnSpecialKeys.setOnClickListener {
+        specialBinding.btnSpecialKeys.setOnClickListener {
             isSpecialKeysEnabled = !isSpecialKeysEnabled
-            switchKeyboardLayout(specialBinding.functionalKeys.btnSpecialKeys)
+            switchKeyboardLayout(specialBinding.btnSpecialKeys)
         }
     }
 
@@ -384,9 +401,11 @@ class PrivacyKeyboardService : InputMethodService() {
     private fun switchKeyboardLayout(button: Button) {
         activeView = if (isSpecialKeysEnabled) {
             setupSpecialLayout()
+            ThemeHelper.applyToKeyboard(specialBinding.root, getCurrentTheme())
             specialBinding.root
         } else {
             setupNormalLayout()
+            ThemeHelper.applyToKeyboard(normalBinding.root, getCurrentTheme())
             normalBinding.root
         }
         setInputView(activeView)
@@ -400,7 +419,6 @@ class PrivacyKeyboardService : InputMethodService() {
         if (emojiBinding.root.visibility == View.VISIBLE) {
             emojiBinding.root.visibility = View.GONE
             normalBinding.keyboardRowsContainer.visibility = View.VISIBLE
-            resetEmojiButton()
         } else {
             normalBinding.keyboardRowsContainer.visibility = View.GONE
             emojiBinding.root.visibility = View.VISIBLE
@@ -439,7 +457,6 @@ class PrivacyKeyboardService : InputMethodService() {
                     button.text.toString().lowercase()
                 currentInputConnection?.commitText(inputText, 1)
                 capsController.makeKeysLowercase()
-                resetEmojiButton()
             }
         }
     }
@@ -501,12 +518,25 @@ class PrivacyKeyboardService : InputMethodService() {
     )
 
     // -----------------------------------------------------------------------
-    // Emoji button helpers
+    // Theme + settings button helpers
     // -----------------------------------------------------------------------
 
-    /** Resets the emoji toggle button back to the default smiley icon. */
-    private fun resetEmojiButton() {
-        normalBinding.btnEmoji.text = getString(R.string.smiley)
+    private fun getCurrentTheme() = KeyboardTheme.forId(prefs.themeId)
+
+    /**
+     * Settings gear in the normal keyboard top bar hides when the suggestion
+     * strip or clipboard is showing (they need all the horizontal space).
+     * In the emoji layout the gear is always visible.
+     */
+    private fun updateSettingsButtonVisibility() {
+        if (!::normalBinding.isInitialized) return
+        val anySuggestion =
+            normalBinding.suggestion1.visibility == View.VISIBLE ||
+            normalBinding.suggestion2.visibility == View.VISIBLE ||
+            normalBinding.suggestion3.visibility == View.VISIBLE
+        val clipboard = normalBinding.clipboardScroll.visibility == View.VISIBLE
+        normalBinding.btnKeyboardSettings.visibility =
+            if (anySuggestion || clipboard) View.GONE else View.VISIBLE
     }
 
     // -----------------------------------------------------------------------

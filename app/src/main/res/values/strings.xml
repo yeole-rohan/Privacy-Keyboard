@@ -57,6 +57,8 @@
     <string name="btn_left_paren">(</string>
     <string name="btn_right_paren">)</string>
     <string name="btn_question">?</string>
+    <string name="btn_apostrophe">\'</string>
+    <string name="btn_quote">\"</string>
     <string name="btn_special_keys">!?</string>
     <string name="btn_comma">,</string>
     <string name="btn_space">Space</string>
@@ -73,6 +75,7 @@
     <string name="normal_mode_text">abc</string>
 
     <!-- Accessibility content descriptions -->
+    <string name="btn_settings">⚙</string>
     <string name="cd_caps_lock">Caps Lock</string>
     <string name="cd_backspace">Backspace</string>
     <string name="cd_enter">Enter</string>

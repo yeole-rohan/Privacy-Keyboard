@@ -7,27 +7,18 @@
     android:background="@color/backgroundWhiteThemeColor"
     android:padding="4dp">
 
-
-    <!-- Numeric Row -->
+    <!-- Row 1: 1 2 3 4 5 6 7 8 9 0 -->
     <include
         android:id="@+id/rowNumeric"
         layout="@layout/row_numeric" />
 
-    <!-- First Row of Special Characters -->
+    <!-- Row 2: @ # $ _ & - + ( ) / -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:weightSum="10"
         android:layout_marginTop="12dp">
-
-        <Button
-            android:clickable="true"
-            android:focusable="true"
-            android:id="@+id/btnExclamation"
-            style="@style/btnLightTheme"
-            android:layout_weight="1"
-            android:text="@string/btn_exclamation" />
 
         <Button
             android:clickable="true"
@@ -56,10 +47,10 @@
         <Button
             android:clickable="true"
             android:focusable="true"
-            android:id="@+id/btnPercent"
+            android:id="@+id/btnUnderscore"
             style="@style/btnLightTheme"
             android:layout_weight="1"
-            android:text="@string/btn_percent" />
+            android:text="@string/btn_underscore" />
 
         <Button
             android:clickable="true"
@@ -72,10 +63,18 @@
         <Button
             android:clickable="true"
             android:focusable="true"
-            android:id="@+id/btnAsterisk"
+            android:id="@+id/btnMinus"
             style="@style/btnLightTheme"
             android:layout_weight="1"
-            android:text="@string/btn_asterisk" />
+            android:text="@string/btn_minus" />
+
+        <Button
+            android:clickable="true"
+            android:focusable="true"
+            android:id="@+id/btnPlus"
+            style="@style/btnLightTheme"
+            android:layout_weight="1"
+            android:text="@string/btn_plus" />
 
         <Button
             android:clickable="true"
@@ -96,53 +95,44 @@
         <Button
             android:clickable="true"
             android:focusable="true"
-            android:id="@+id/btnQuestion"
+            android:id="@+id/btnSlash"
             style="@style/btnLightTheme"
             android:layout_weight="1"
-            android:text="@string/btn_question" />
+            android:text="@string/btn_slash" />
 
     </LinearLayout>
 
-    <!-- Second Row of Special Characters -->
+    <!-- Row 3: * " ' : ; ! ? [backspace]  — backspace weight=3 aligns above Enter -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:weightSum="10"
-        android:gravity="center"
         android:layout_marginTop="12dp">
 
         <Button
             android:clickable="true"
             android:focusable="true"
-            android:id="@+id/btnMinus"
+            android:id="@+id/btnAsterisk"
             style="@style/btnLightTheme"
-            android:layout_weight="1.5"
-            android:text="@string/btn_minus" />
+            android:layout_weight="1"
+            android:text="@string/btn_asterisk" />
 
         <Button
             android:clickable="true"
             android:focusable="true"
-            android:id="@+id/btnUnderscore"
+            android:id="@+id/btnQuote"
             style="@style/btnLightTheme"
             android:layout_weight="1"
-            android:text="@string/btn_underscore" />
+            android:text="@string/btn_quote" />
 
         <Button
             android:clickable="true"
             android:focusable="true"
-            android:id="@+id/btnPlus"
+            android:id="@+id/btnApostrophe"
             style="@style/btnLightTheme"
             android:layout_weight="1"
-            android:text="@string/btn_plus" />
-
-        <Button
-            android:clickable="true"
-            android:focusable="true"
-            android:id="@+id/btnTilde"
-            style="@style/btnLightTheme"
-            android:layout_weight="1"
-            android:text="@string/btn_tilde" />
+            android:text="@string/btn_apostrophe" />
 
         <Button
             android:clickable="true"
@@ -163,26 +153,80 @@
         <Button
             android:clickable="true"
             android:focusable="true"
-            android:id="@+id/btnSlash"
+            android:id="@+id/btnExclamation"
             style="@style/btnLightTheme"
             android:layout_weight="1"
-            android:text="@string/btn_slash" />
+            android:text="@string/btn_exclamation" />
 
-        <!-- BackSpace Btn with weight 1.5 -->
+        <Button
+            android:clickable="true"
+            android:focusable="true"
+            android:id="@+id/btnQuestion"
+            style="@style/btnLightTheme"
+            android:layout_weight="1"
+            android:text="@string/btn_question" />
+
+        <!-- Backspace: weight=3 so it sits directly above Enter (weight=3) -->
         <include
             android:id="@+id/backSpace"
             layout="@layout/back_space_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1.5" />
+            android:layout_weight="3" />
+
     </LinearLayout>
 
-    <!-- Functional Keys Row -->
-    <include
-        android:id="@+id/functionalKeys"
-        layout="@layout/functional_keys"
+    <!-- Bottom row: [abc] [,] [Space] [.] [Enter] — weightSum=10 -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp" />
+        android:orientation="horizontal"
+        android:weightSum="10"
+        android:layout_marginTop="8dp">
+
+        <Button
+            android:id="@+id/btnSpecialKeys"
+            style="@style/btnLightTheme"
+            android:layout_weight="2"
+            android:clickable="true"
+            android:focusable="true"
+            android:text="@string/normal_mode_text" />
+
+        <Button
+            android:id="@+id/btnComma"
+            android:clickable="true"
+            android:focusable="true"
+            style="@style/btnLightTheme"
+            android:layout_weight="1"
+            android:text="@string/btn_comma" />
+
+        <Button
+            android:id="@+id/btnSpace"
+            style="@style/btnLightTheme"
+            android:layout_weight="3"
+            android:clickable="true"
+            android:focusable="true"
+            android:text="@string/btn_space" />
+
+        <Button
+            android:id="@+id/btnDot"
+            style="@style/btnLightTheme"
+            android:layout_weight="1"
+            android:text="@string/btn_dot"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <!-- Enter: weight=3, sits directly below Backspace (weight=3) -->
+        <Button
+            android:clickable="true"
+            android:focusable="true"
+            android:id="@+id/btnEnter"
+            style="@style/btnLightTheme"
+            android:padding="8dp"
+            android:layout_width="0dp"
+            android:background="@drawable/arrow_with_background"
+            android:layout_weight="3" />
+
+    </LinearLayout>
 
 </LinearLayout>

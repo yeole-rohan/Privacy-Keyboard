@@ -1,40 +1,285 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#e3ebf9"
-    android:orientation="vertical"
-    android:padding="20dp"
-    tools:context=".MainActivity">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        android:textColor="@color/black"
-        android:fontFamily="@font/roboto"
-        android:textSize="20sp"/>
+    android:background="#F0F4FF">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- ===== HEADER ===== -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingTop="20dp"
+            android:paddingBottom="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⌨"
+                android:textSize="48sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Privacy Keyboard"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#1A237E"
+                android:fontFamily="@font/roboto"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Your privacy. Your keyboard."
+                android:textSize="13sp"
+                android:textColor="#666666"
+                android:layout_marginTop="4dp" />
+
+        </LinearLayout>
+
+        <!-- ===== STATUS CARD ===== -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/rounded_border"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:id="@+id/tvStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Checking status…"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/roboto" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tap 'Enable' to add it to your input methods, then 'Select' to make it active."
+                android:textSize="12sp"
+                android:textColor="#777777"
+                android:layout_marginTop="6dp" />
+
+        </LinearLayout>
+
+        <!-- ===== ENABLE / SELECT BUTTONS ===== -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnEnableKeyboard"
             android:layout_width="match_parent"
-            android:layout_height="55dp"
+            android:layout_height="52dp"
+            android:text="Enable Privacy Keyboard"
             android:textAllCaps="false"
-            app:cornerRadius="14dp"
+            android:textSize="16sp"
             android:textColor="@color/white"
-            android:backgroundTint="#f69a4d"
             android:fontFamily="@font/roboto"
-            android:layout_marginTop="0dp"
-            android:textSize="20sp"
-            android:text="@string/enable_privacy_keyboard"/>
-    </LinearLayout>
+            app:cornerRadius="14dp"
+            android:backgroundTint="#4A90D9"
+            android:layout_marginBottom="10dp" />
 
-</LinearLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSelectKeyboard"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="Select as Active Keyboard"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:textColor="#4A90D9"
+            android:fontFamily="@font/roboto"
+            app:cornerRadius="14dp"
+            app:strokeColor="#4A90D9"
+            app:strokeWidth="1.5dp"
+            android:backgroundTint="@android:color/transparent"
+            android:layout_marginBottom="24dp" />
+
+        <!-- ===== NAV SECTION LABEL ===== -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="OPTIONS"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:textColor="#9999AA"
+            android:letterSpacing="0.1"
+            android:layout_marginBottom="8dp" />
+
+        <!-- ===== NAVIGATION CARDS ===== -->
+
+        <!-- Settings -->
+        <LinearLayout
+            android:id="@+id/cardSettings"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/rounded_border"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="⚙  Settings"
+                android:textSize="15sp"
+                android:textColor="#222222" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="›"
+                android:textSize="20sp"
+                android:textColor="#AAAAAA" />
+
+        </LinearLayout>
+
+        <!-- About -->
+        <LinearLayout
+            android:id="@+id/cardAbout"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/rounded_border"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="ℹ  About"
+                android:textSize="15sp"
+                android:textColor="#222222" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="›"
+                android:textSize="20sp"
+                android:textColor="#AAAAAA" />
+
+        </LinearLayout>
+
+        <!-- Privacy Policy -->
+        <LinearLayout
+            android:id="@+id/cardPrivacy"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/rounded_border"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="🔒  Privacy Policy"
+                android:textSize="15sp"
+                android:textColor="#222222" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="›"
+                android:textSize="20sp"
+                android:textColor="#AAAAAA" />
+
+        </LinearLayout>
+
+        <!-- Terms of Service -->
+        <LinearLayout
+            android:id="@+id/cardTerms"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/rounded_border"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="📋  Terms of Service"
+                android:textSize="15sp"
+                android:textColor="#222222" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="›"
+                android:textSize="20sp"
+                android:textColor="#AAAAAA" />
+
+        </LinearLayout>
+
+        <!-- Legal -->
+        <LinearLayout
+            android:id="@+id/cardLegal"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/rounded_border"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginBottom="24dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="⚖  Legal"
+                android:textSize="15sp"
+                android:textColor="#222222" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="›"
+                android:textSize="20sp"
+                android:textColor="#AAAAAA" />
+
+        </LinearLayout>
+
+        <!-- Footer -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Made with ❤ by Rohan Yeole\nrohanyeole.com"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:textColor="#AAAAAA"
+            android:layout_marginBottom="8dp" />
+
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Keyboard — The Android Keyboard That Keeps Your Typing Private</title>
+  <meta name="description" content="Privacy Keyboard is a free, open-source Android keyboard that works entirely on your device. No data collection, no internet, no tracking.">
+  <link rel="icon" href="media/app-icon.png" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<!-- ============ NAVBAR ============ -->
+<nav>
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <img src="media/app-icon.png" alt="Privacy Keyboard icon" />
+      Privacy<span class="logo-dot">Keyboard</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="active">Home</a>
+      <a href="about.html">About</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+      <a href="legal.html">Legal</a>
+      <a href="#install" class="nav-cta">Get the App</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="container hero-inner">
+    <div class="hero-text">
+      <p class="hero-tagline">Free · Open Source · No Internet Required</p>
+      <h1>The keyboard that doesn't know your <span>business</span></h1>
+      <p>Privacy Keyboard is a free Android keyboard that works entirely on your device. Your keystrokes, words, and clipboard items never leave your phone — not to us, not to anyone.</p>
+      <div class="hero-buttons">
+        <a href="#install" class="btn btn-primary">How to Install</a>
+        <a href="https://github.com/rohanyeole/privacy-keyboard" class="btn btn-outline" target="_blank" rel="noopener">View on GitHub</a>
+      </div>
+      <div class="hero-badge">
+        <span>🔒</span> No internet permission &nbsp;·&nbsp;
+        <span>🚫</span> No data collection &nbsp;·&nbsp;
+        <span>✓</span> 100% on-device
+      </div>
+    </div>
+    <div class="hero-img">
+      <!-- Replace with: media/hero-phone.png -->
+      <div class="hero-img-placeholder">
+        <div style="font-size:2rem">📱</div>
+        <strong>hero-phone.png</strong>
+        <span>Phone showing the keyboard in action</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROBLEM ============ -->
+<section class="problem-section">
+  <div class="container">
+    <div class="problem-intro">
+      <p class="section-label">The Problem</p>
+      <h2>Most keyboards are watching everything you type</h2>
+      <p>Your keyboard is the most sensitive app on your phone. It sees your passwords, messages, bank details, and health information — often before you even send them.</p>
+    </div>
+
+    <div class="comparison-grid">
+      <div class="comparison-card bad">
+        <h3>⚠️ What popular keyboards do</h3>
+        <ul class="comparison-list">
+          <li class="bad-item"><span class="icon">✗</span> Send keystrokes to remote servers for "personalisation"</li>
+          <li class="bad-item"><span class="icon">✗</span> Build a profile of your vocabulary and writing style</li>
+          <li class="bad-item"><span class="icon">✗</span> Use your typing data to improve AI models</li>
+          <li class="bad-item"><span class="icon">✗</span> Share anonymised data with advertising partners</li>
+          <li class="bad-item"><span class="icon">✗</span> Require an internet connection to work at all</li>
+          <li class="bad-item"><span class="icon">✗</span> Collect device identifiers and usage statistics</li>
+        </ul>
+      </div>
+      <div class="comparison-card good">
+        <h3>✅ What Privacy Keyboard does</h3>
+        <ul class="comparison-list">
+          <li class="good-item"><span class="icon">✓</span> Everything stays on your device, always</li>
+          <li class="good-item"><span class="icon">✓</span> No internet connection — ever required or used</li>
+          <li class="good-item"><span class="icon">✓</span> Word learning saved only to your local storage</li>
+          <li class="good-item"><span class="icon">✓</span> Clipboard shown in-memory only, never persisted</li>
+          <li class="good-item"><span class="icon">✓</span> Zero telemetry, zero analytics, zero ads</li>
+          <li class="good-item"><span class="icon">✓</span> No internet permission in the app at all</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="keyboard-examples">
+      <h4>Did you know? — Real examples from popular keyboard privacy policies</h4>
+      <p>
+        <strong>Gboard (Google):</strong> may use your typing data to improve spelling correction, next-word prediction, and other Google products. Data may be sent to Google's servers even when Gboard is your active keyboard.<br><br>
+        <strong>SwiftKey (Microsoft):</strong> collects words and phrases you type (excluding passwords in password fields) to build a personalised language model. This data is linked to your Microsoft account and synced across devices.<br><br>
+        <strong>Grammarly Keyboard:</strong> sends your text to Grammarly's servers in real time so that corrections can be computed remotely — including text typed in all apps while the keyboard is active.<br><br>
+        Privacy Keyboard has <strong>no server to send anything to</strong>. There is no internet permission in the app manifest. There is nothing to opt out of — because nothing is collected in the first place.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEATURES ============ -->
+<section class="features-section">
+  <div class="container">
+    <p class="section-label">Features</p>
+    <h2>A full-featured keyboard that respects you</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">💡</div>
+        <h3>Smart Word Suggestions</h3>
+        <p>As you type, the keyboard suggests words from a built-in dictionary and from words you have used before — all computed on-device.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📚</div>
+        <h3>Personal Word Learning</h3>
+        <p>The keyboard remembers words you use often and puts them first. Your personal dictionary never leaves your phone.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">😀</div>
+        <h3>Emoji Picker</h3>
+        <p>Browse emojis by category with a smooth scrolling picker. Your recently used emoji appear at the top automatically.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <h3>Clipboard Manager</h3>
+        <p>Copied items appear in the keyboard for quick paste. Clipboard content is held in memory only — never written to disk.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎨</div>
+        <h3>Custom Colour Themes</h3>
+        <p>Choose from Light, Dark, Ocean, Sunset, Forest, Lavender, and Midnight themes. Theme applies instantly without a restart.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📳</div>
+        <h3>Haptic Feedback</h3>
+        <p>Feel every key press with adjustable vibration — Light, Medium, or Strong — or switch it off entirely.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⌨️</div>
+        <h3>Special Characters</h3>
+        <p>A dedicated special-character keyboard gives you quick access to symbols, punctuation, brackets, and more.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">↔️</div>
+        <h3>Spacebar Cursor Control</h3>
+        <p>Slide your finger left or right across the spacebar to move the text cursor — precise editing without the magnifier.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔡</div>
+        <h3>3-State Caps Lock</h3>
+        <p>Tap Shift once for a single capital letter (auto-resets), tap twice to lock all capitals, tap again to turn off.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ INSTALL GUIDE ============ -->
+<section class="install-section" id="install">
+  <div class="container">
+    <p class="section-label">How to Install &amp; Enable</p>
+    <h2>Up and running in under two minutes</h2>
+    <p>Installing a third-party keyboard on Android is a two-step process: first enable it, then set it as your active keyboard.</p>
+
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h4>Install the App</h4>
+        <p>Download Privacy Keyboard from the Google Play Store and install it on your device.</p>
+        <!-- Replace with: media/step-enable-1.png -->
+        <div class="step-img-placeholder">step-enable-1.png<br>Play Store install screen</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h4>Open the App</h4>
+        <p>Launch Privacy Keyboard and tap <strong>Enable Keyboard</strong>. Android will open the keyboard settings list.</p>
+        <!-- Replace with: media/step-enable-2.png -->
+        <div class="step-img-placeholder">step-enable-2.png<br>App home screen</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h4>Toggle It On</h4>
+        <p>Find <em>Privacy Keyboard</em> in the list and toggle it <strong>ON</strong>. Android will ask you to confirm — tap OK.</p>
+        <!-- Replace with: media/step-enable-3.png -->
+        <div class="step-img-placeholder">step-enable-3.png<br>Keyboard list with toggle</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h4>Select as Default</h4>
+        <p>Go back to the app and tap <strong>Select as Active Keyboard</strong>. Pick Privacy Keyboard from the system picker.</p>
+        <!-- Replace with: media/step-enable-4.png -->
+        <div class="step-img-placeholder">step-enable-4.png<br>System keyboard picker</div>
+      </div>
+    </div>
+
+    <!-- GIF demo -->
+    <div class="gif-block">
+      <div>
+        <h3>See it in action</h3>
+        <p>This short animation shows the complete setup process from install to first use — it takes less than 90 seconds.</p>
+        <br>
+        <p style="color:rgba(255,255,255,0.4); font-size:0.85rem;">Note: The exact screens may look slightly different depending on your Android version and device manufacturer, but the steps are the same.</p>
+      </div>
+      <!-- Replace with: media/demo-enable.gif -->
+      <div class="gif-placeholder">
+        <div style="font-size:2rem">🎬</div>
+        <strong>demo-enable.gif</strong>
+        <span>Animated walkthrough: enabling and selecting Privacy Keyboard</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SCREENSHOTS ============ -->
+<section class="screenshots-section">
+  <div class="container">
+    <div class="screenshots-intro">
+      <p class="section-label">App Screenshots</p>
+      <h2>Clean, minimal, distraction-free</h2>
+      <p>Designed to stay out of your way while giving you all the tools you need.</p>
+    </div>
+    <div class="screenshots-grid">
+      <div class="screenshot-item">
+        <!-- Replace with: media/screenshot-keyboard.png -->
+        <div class="screenshot-placeholder">
+          <div style="font-size:1.5rem">⌨️</div>
+          <strong>screenshot-keyboard.png</strong>
+          <span>Main keyboard view</span>
+        </div>
+        <span>Main Keyboard</span>
+      </div>
+      <div class="screenshot-item">
+        <!-- Replace with: media/screenshot-suggestions.png -->
+        <div class="screenshot-placeholder">
+          <div style="font-size:1.5rem">💡</div>
+          <strong>screenshot-suggestions.png</strong>
+          <span>Word suggestion bar</span>
+        </div>
+        <span>Word Suggestions</span>
+      </div>
+      <div class="screenshot-item">
+        <!-- Replace with: media/screenshot-emoji.png -->
+        <div class="screenshot-placeholder">
+          <div style="font-size:1.5rem">😀</div>
+          <strong>screenshot-emoji.png</strong>
+          <span>Emoji picker with categories</span>
+        </div>
+        <span>Emoji Picker</span>
+      </div>
+      <div class="screenshot-item">
+        <!-- Replace with: media/screenshot-themes.png -->
+        <div class="screenshot-placeholder">
+          <div style="font-size:1.5rem">🎨</div>
+          <strong>screenshot-themes.png</strong>
+          <span>Theme selection screen</span>
+        </div>
+        <span>Themes</span>
+      </div>
+      <div class="screenshot-item">
+        <!-- Replace with: media/screenshot-settings.png -->
+        <div class="screenshot-placeholder">
+          <div style="font-size:1.5rem">⚙️</div>
+          <strong>screenshot-settings.png</strong>
+          <span>Settings — vibration controls</span>
+        </div>
+        <span>Settings</span>
+      </div>
+      <div class="screenshot-item">
+        <!-- Replace with: media/screenshot-main-app.png -->
+        <div class="screenshot-placeholder">
+          <div style="font-size:1.5rem">📱</div>
+          <strong>screenshot-main-app.png</strong>
+          <span>App home / setup screen</span>
+        </div>
+        <span>App Home</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="cta-section">
+  <div class="container">
+    <h2>Start typing privately today</h2>
+    <p>Free, forever. No account. No sign-up. No strings attached.</p>
+    <div class="cta-buttons">
+      <a href="#install" class="btn btn-dark">How to Install</a>
+      <a href="privacy.html" class="btn btn-outline">Read our Privacy Policy</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo">
+          <img src="media/app-icon.png" alt="" />
+          Privacy<span class="logo-dot">Keyboard</span>
+        </a>
+        <p>A free, private Android keyboard that keeps your typing exactly where it belongs — on your device.</p>
+      </div>
+      <div class="footer-links">
+        <h4>App</h4>
+        <ul>
+          <li><a href="index.html#install">Install Guide</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="https://github.com/rohanyeole/privacy-keyboard" target="_blank" rel="noopener">GitHub</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="terms.html">Terms of Service</a></li>
+          <li><a href="legal.html">Legal Notices</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Rohan Yeole · <a href="https://rohanyeole.com" target="_blank" rel="noopener">rohanyeole.com</a></span>
+      <span><a href="https://privacy-keyboard.rohanyeole.com">privacy-keyboard.rohanyeole.com</a></span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

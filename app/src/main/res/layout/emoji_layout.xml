@@ -6,7 +6,7 @@
     android:padding="0dp"
     android:layout_margin="0dp">
 
-    <!-- Active category label — auto-updates as user scrolls -->
+    <!-- Top bar: category label -->
     <TextView
         android:id="@+id/tvCurrentCategory"
         android:layout_width="match_parent"
@@ -45,17 +45,5 @@
 
     </ScrollView>
 
-    <!-- Backspace Button -->
-    <Button
-        android:id="@+id/btnBackspace"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="?android:attr/buttonBarButtonStyle"
-        android:layout_gravity="center"
-        android:text="@string/back_space"
-        android:background="@drawable/ripple_effect"
-        android:padding="0dp"
-        android:layout_margin="0dp"
-        android:textSize="25sp" />
 
 </LinearLayout>

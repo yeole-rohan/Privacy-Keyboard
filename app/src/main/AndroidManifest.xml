@@ -28,6 +28,16 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false"
+            android:label="Settings" />
+
+        <activity
+            android:name=".InfoActivity"
+            android:exported="false"
+            android:label="Info" />
+
         <!-- Input Method Service: Custom keyboard service -->
         <service
             android:name=".PrivacyKeyboardService"

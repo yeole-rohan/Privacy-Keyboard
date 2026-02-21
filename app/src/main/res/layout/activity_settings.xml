@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F7F9FC">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- ============================================================
+             VIBRATION SECTION
+             ============================================================ -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🔊  Vibration"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:textColor="#4A90D9"
+            android:letterSpacing="0.08"
+            android:textAllCaps="true"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Card wrapper for vibration controls -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/rounded_border"
+            android:padding="16dp"
+            android:layout_marginBottom="20dp">
+
+            <!-- Toggle row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Key press vibration"
+                    android:textSize="15sp"
+                    android:textColor="#222222" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchVibration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <!-- Strength section (hidden when vibration off) -->
+            <LinearLayout
+                android:id="@+id/layoutStrength"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="12dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Strength"
+                    android:textSize="13sp"
+                    android:textColor="#666666"
+                    android:layout_marginBottom="6dp" />
+
+                <RadioGroup
+                    android:id="@+id/rgStrength"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/rbLight"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Light"
+                        android:textSize="14sp" />
+
+                    <RadioButton
+                        android:id="@+id/rbMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Medium"
+                        android:textSize="14sp" />
+
+                    <RadioButton
+                        android:id="@+id/rbStrong"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Strong"
+                        android:textSize="14sp" />
+
+                </RadioGroup>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- ============================================================
+             THEME SECTION
+             ============================================================ -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🎨  Theme"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:textColor="#4A90D9"
+            android:letterSpacing="0.08"
+            android:textAllCaps="true"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Theme option list (one per row, populated from code) -->
+        <LinearLayout
+            android:id="@+id/themeListContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/rounded_border"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Preview label -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Preview"
+            android:textSize="13sp"
+            android:textColor="#666666"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Mini keyboard preview -->
+        <LinearLayout
+            android:id="@+id/previewContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:layout_marginBottom="8dp">
+
+            <!-- Preview row 1 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="5"
+                android:layout_marginBottom="4dp">
+
+                <Button android:id="@+id/pvQ" style="@style/btnLightTheme" android:layout_weight="1" android:text="Q" android:textSize="14sp" android:layout_height="40dp" />
+                <Button android:id="@+id/pvW" style="@style/btnLightTheme" android:layout_weight="1" android:text="W" android:textSize="14sp" android:layout_height="40dp" />
+                <Button android:id="@+id/pvE" style="@style/btnLightTheme" android:layout_weight="1" android:text="E" android:textSize="14sp" android:layout_height="40dp" />
+                <Button android:id="@+id/pvR" style="@style/btnLightTheme" android:layout_weight="1" android:text="R" android:textSize="14sp" android:layout_height="40dp" />
+                <Button android:id="@+id/pvT" style="@style/btnLightTheme" android:layout_weight="1" android:text="T" android:textSize="14sp" android:layout_height="40dp" />
+
+            </LinearLayout>
+
+            <!-- Preview row 2 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="5"
+                android:layout_marginBottom="4dp">
+
+                <Button android:id="@+id/pvA" style="@style/btnLightTheme" android:layout_weight="1" android:text="A" android:textSize="14sp" android:layout_height="40dp" />
+                <Button android:id="@+id/pvS" style="@style/btnLightTheme" android:layout_weight="1" android:text="S" android:textSize="14sp" android:layout_height="40dp" />
+                <Button android:id="@+id/pvD" style="@style/btnLightTheme" android:layout_weight="1" android:text="D" android:textSize="14sp" android:layout_height="40dp" />
+                <Button android:id="@+id/pvF" style="@style/btnLightTheme" android:layout_weight="1" android:text="F" android:textSize="14sp" android:layout_height="40dp" />
+                <Button android:id="@+id/pvG" style="@style/btnLightTheme" android:layout_weight="1" android:text="G" android:textSize="14sp" android:layout_height="40dp" />
+
+            </LinearLayout>
+
+            <!-- Preview bottom row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="5">
+
+                <Button android:id="@+id/pvSpace" style="@style/btnLightTheme" android:layout_weight="3" android:text="Space" android:textSize="12sp" android:layout_height="40dp" />
+                <Button android:id="@+id/pvEnter" style="@style/btnLightTheme" android:layout_weight="2" android:text="↵" android:textSize="18sp" android:layout_height="40dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

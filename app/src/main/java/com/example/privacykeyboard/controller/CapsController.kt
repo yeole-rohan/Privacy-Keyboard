@@ -1,9 +1,7 @@
 package com.example.privacykeyboard.controller
 
-import android.content.res.ColorStateList
+import android.graphics.Typeface
 import android.widget.Button
-import androidx.core.content.ContextCompat
-import com.example.privacykeyboard.R
 import com.example.privacykeyboard.databinding.KeyboardLayoutBinding
 import com.example.privacykeyboard.model.CapsState
 import com.example.privacykeyboard.util.nextCapsState
@@ -29,8 +27,7 @@ class CapsController(private val binding: KeyboardLayoutBinding) {
             state = CapsState.OFF
             applyToButtons(alphabeticButtons())
             val btn = binding.rowAlphabetic3.capsLock.btnCapsLock
-            btn.setBackgroundResource(R.drawable.lower_key_icon)
-            btn.backgroundTintList = null
+            applyOffState(btn)
         }
     }
 
@@ -45,14 +42,26 @@ class CapsController(private val binding: KeyboardLayoutBinding) {
 
     private fun updateUI() {
         val btn = binding.rowAlphabetic3.capsLock.btnCapsLock
-        val iconRes = if (state == CapsState.OFF) R.drawable.lower_key_icon else R.drawable.upper_key_icon
-        btn.setBackgroundResource(iconRes)
-        btn.backgroundTintList = if (state == CapsState.CAPS_LOCK)
-            ColorStateList.valueOf(
-                ContextCompat.getColor(binding.root.context, android.R.color.holo_blue_light)
-            )
-        else null
+        when (state) {
+            CapsState.OFF -> applyOffState(btn)
+            CapsState.SHIFT -> {
+                btn.text = "A"
+                btn.setTypeface(null, Typeface.NORMAL)
+                btn.paintFlags = btn.paintFlags and android.graphics.Paint.UNDERLINE_TEXT_FLAG.inv()
+            }
+            CapsState.CAPS_LOCK -> {
+                btn.text = "A"
+                btn.setTypeface(null, Typeface.BOLD)
+                btn.paintFlags = btn.paintFlags or android.graphics.Paint.UNDERLINE_TEXT_FLAG
+            }
+        }
         applyToButtons(alphabeticButtons())
+    }
+
+    private fun applyOffState(btn: Button) {
+        btn.text = "a"
+        btn.setTypeface(null, Typeface.NORMAL)
+        btn.paintFlags = btn.paintFlags and android.graphics.Paint.UNDERLINE_TEXT_FLAG.inv()
     }
 
     private fun alphabeticButtons(): Array<Button> = arrayOf(
