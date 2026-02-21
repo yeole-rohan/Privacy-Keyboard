@@ -60,7 +60,7 @@ After installing from source you need to re-enable the keyboard in Settings
 ## Project Structure
 
 ```
-app/src/main/java/com/example/privacykeyboard/
+app/src/main/java/com/rohanyeole/privacykeyboard/
 ├── PrivacyKeyboardService.kt   ← keyboard service (orchestrator)
 ├── MainActivity.kt             ← setup / enable flow
 ├── SettingsActivity.kt         ← theme + vibration settings
