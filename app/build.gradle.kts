@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.privacykeyboard"
+    namespace = "com.rohanyeole.privacykeyboard"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.privacykeyboard"
+        applicationId = "com.rohanyeole.privacykeyboard"
         minSdk = 26
         targetSdk = 34
         versionCode = 1

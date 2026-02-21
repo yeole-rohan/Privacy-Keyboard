@@ -99,6 +99,15 @@
                 android:ellipsize="end"
                 android:visibility="gone" />
 
+            <!-- Clipboard chips — shown in place of suggestions when field is empty -->
+            <LinearLayout
+                android:id="@+id/clipboardChipsContainer"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:visibility="gone" />
+
         </LinearLayout>
 
         <!-- Divider before settings button -->
@@ -124,25 +133,6 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#22000000" />
-
-    <!-- ================================================================
-         CLIPBOARD STRIP: vertical scroll, fixed height.
-         Shown only when input field is empty and clipboard has content.
-         ================================================================ -->
-    <ScrollView
-        android:id="@+id/clipboardScroll"
-        android:layout_width="match_parent"
-        android:layout_height="68dp"
-        android:scrollbars="vertical"
-        android:visibility="gone">
-
-        <LinearLayout
-            android:id="@+id/clipboardContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
-
-    </ScrollView>
 
     <!-- ================================================================
          KEYBOARD ROWS (emoji view is added here programmatically)
