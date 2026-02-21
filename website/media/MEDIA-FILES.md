@@ -9,7 +9,15 @@ File names must match exactly (case-sensitive).
 
 | File | Description |
 |---|---|
-| `app-icon.png` | The app's launcher icon. Export from Android Studio at 512×512 px. Used in navbar, footer, and browser tab favicon. |
+| `privacy-keyboard.png` | The app's launcher icon. Export from Android Studio at 512×512 px. Used in navbar, footer, and browser tab favicon. |
+
+---
+
+## Social / OG Image
+
+| File | Description |
+|---|---|
+| `og-image.png` | Open Graph image shown when the site is shared on social media (Twitter, WhatsApp, Slack, etc.). **Required size: 1200 × 630 px.** Recommended content: app name + tagline on a dark green background, with the keyboard icon. Tools: Figma, Canva, or any image editor. |
 
 ---
 
