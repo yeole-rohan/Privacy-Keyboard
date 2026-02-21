@@ -110,11 +110,22 @@
 
         </LinearLayout>
 
-        <!-- Divider before settings button -->
+        <!-- Divider before backspace / settings area -->
         <View
             android:layout_width="1dp"
             android:layout_height="match_parent"
             android:background="#22000000" />
+
+        <!-- Emoji backspace — visible only when emoji picker is open -->
+        <Button
+            android:id="@+id/btnEmojiBackspace"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:text="⌫"
+            android:textSize="18sp"
+            android:background="@drawable/ripple_effect"
+            android:padding="0dp"
+            android:visibility="gone" />
 
         <!-- Settings gear — hidden when suggestions or clipboard are showing -->
         <Button

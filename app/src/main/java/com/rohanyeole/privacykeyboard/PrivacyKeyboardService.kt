@@ -124,6 +124,23 @@ class PrivacyKeyboardService : InputMethodService() {
         // Emoji toggle button
         normalBinding.btnEmoji.setOnClickListener { toggleEmojiLayout() }
 
+        // Emoji backspace — continuous delete, same behaviour as normal backspace
+        normalBinding.btnEmojiBackspace.setOnTouchListener { _, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    hapticHelper.perform()
+                    isBackspacePressed = true
+                    performSingleBackspace()
+                    startContinuousBackspace()
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    isBackspacePressed = false
+                    handler.removeCallbacksAndMessages(null)
+                }
+            }
+            true
+        }
+
         // Keyboard settings gear (normal keyboard top bar) → opens SettingsActivity
         normalBinding.btnKeyboardSettings.setOnClickListener {
             hapticHelper.perform()
@@ -418,9 +435,11 @@ class PrivacyKeyboardService : InputMethodService() {
         if (emojiBinding.root.visibility == View.VISIBLE) {
             emojiBinding.root.visibility = View.GONE
             normalBinding.keyboardRowsContainer.visibility = View.VISIBLE
+            normalBinding.btnEmojiBackspace.visibility = View.GONE
         } else {
             normalBinding.keyboardRowsContainer.visibility = View.GONE
             emojiBinding.root.visibility = View.VISIBLE
+            normalBinding.btnEmojiBackspace.visibility = View.VISIBLE
             emojiController.render()
         }
     }
