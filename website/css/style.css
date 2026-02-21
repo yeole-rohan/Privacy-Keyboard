@@ -28,7 +28,7 @@ body {
   background: var(--page-bg);
   line-height: 1.65;
 }
-img { max-width: 100%; height: auto; display: block; }
+img { max-width: 100%; height: auto; display: block; border-radius: 2px; }
 a { color: var(--green-mid); text-decoration: none; }
 a:hover { color: var(--green-bright); }
 ul { list-style: none; }
@@ -263,7 +263,7 @@ nav {
 .install-section > .container > p { color: rgba(255,255,255,0.65); margin-bottom: 48px; }
 .steps-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
   margin-bottom: 48px;
 }
