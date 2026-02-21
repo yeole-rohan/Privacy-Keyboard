@@ -65,6 +65,7 @@
                 android:fontFamily="@font/roboto" />
 
             <TextView
+                android:id="@+id/tvStatusSub"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Tap 'Enable' to add it to your input methods, then 'Select' to make it active."

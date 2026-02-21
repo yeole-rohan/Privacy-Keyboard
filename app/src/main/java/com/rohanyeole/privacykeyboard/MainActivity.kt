@@ -50,16 +50,55 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateKeyboardStatus() {
         val enabled = isKeyboardEnabled()
-        if (enabled) {
-            binding.tvStatus.text = "✓  Privacy Keyboard is enabled"
-            binding.tvStatus.setTextColor(Color.parseColor("#2E7D32"))
-            binding.btnEnableKeyboard.isEnabled = false
-            binding.btnEnableKeyboard.alpha = 0.45f
-        } else {
-            binding.tvStatus.text = "✗  Privacy Keyboard is not enabled"
-            binding.tvStatus.setTextColor(Color.parseColor("#C62828"))
-            binding.btnEnableKeyboard.isEnabled = true
-            binding.btnEnableKeyboard.alpha = 1f
+        val active  = isKeyboardDefault()
+
+        when {
+            active -> {
+                // Step 2 complete — fully set up
+                binding.tvStatus.text = "✓  Active keyboard"
+                binding.tvStatus.setTextColor(Color.parseColor("#2E7D32"))
+                binding.tvStatusSub.text = "Privacy Keyboard is your active keyboard. You're all set!"
+
+                binding.btnEnableKeyboard.isEnabled = false
+                binding.btnEnableKeyboard.alpha = 0.4f
+
+                binding.btnSelectKeyboard.isEnabled = false
+                binding.btnSelectKeyboard.alpha = 0.4f
+                binding.btnSelectKeyboard.setTextColor(Color.parseColor("#2E7D32"))
+                binding.btnSelectKeyboard.strokeColor = android.content.res.ColorStateList.valueOf(Color.parseColor("#2E7D32"))
+                binding.btnSelectKeyboard.text = "✓  Set as active keyboard"
+            }
+            enabled -> {
+                // Step 1 done — nudge towards step 2
+                binding.tvStatus.text = "⚡  Enabled — not yet active"
+                binding.tvStatus.setTextColor(Color.parseColor("#E65100"))
+                binding.tvStatusSub.text = "Tap 'Select as Active Keyboard' below to finish setup."
+
+                binding.btnEnableKeyboard.isEnabled = false
+                binding.btnEnableKeyboard.alpha = 0.4f
+
+                binding.btnSelectKeyboard.isEnabled = true
+                binding.btnSelectKeyboard.alpha = 1f
+                binding.btnSelectKeyboard.setTextColor(Color.WHITE)
+                binding.btnSelectKeyboard.setBackgroundColor(Color.parseColor("#4A90D9"))
+                binding.btnSelectKeyboard.strokeColor = android.content.res.ColorStateList.valueOf(Color.parseColor("#4A90D9"))
+                binding.btnSelectKeyboard.text = "Select as Active Keyboard"
+            }
+            else -> {
+                // Step 1 not done
+                binding.tvStatus.text = "✗  Privacy Keyboard is not enabled"
+                binding.tvStatus.setTextColor(Color.parseColor("#C62828"))
+                binding.tvStatusSub.text = "Tap 'Enable Privacy Keyboard' below, find it in the list, and toggle it on."
+
+                binding.btnEnableKeyboard.isEnabled = true
+                binding.btnEnableKeyboard.alpha = 1f
+
+                binding.btnSelectKeyboard.isEnabled = false
+                binding.btnSelectKeyboard.alpha = 0.4f
+                binding.btnSelectKeyboard.setTextColor(Color.parseColor("#4A90D9"))
+                binding.btnSelectKeyboard.strokeColor = android.content.res.ColorStateList.valueOf(Color.parseColor("#4A90D9"))
+                binding.btnSelectKeyboard.text = "Select as Active Keyboard"
+            }
         }
     }
 
@@ -103,5 +142,10 @@ class MainActivity : AppCompatActivity() {
     private fun isKeyboardEnabled(): Boolean {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         return imm.enabledInputMethodList.any { it.id.contains("PrivacyKeyboardService") }
+    }
+
+    private fun isKeyboardDefault(): Boolean {
+        val default = Settings.Secure.getString(contentResolver, Settings.Secure.DEFAULT_INPUT_METHOD)
+        return default?.contains("PrivacyKeyboardService") == true
     }
 }
